@@ -1,0 +1,92 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>busbus</title>	
+
+	<style type="text/css">    
+  body
+  {
+    background-color:#000;
+  }
+
+  ul
+  {
+    margin:0px;
+    padding:0px;
+    overflow:hidden;
+    list-style-type:none;
+  }
+
+  a:link, a:visited
+  {
+    display:block;
+    width:auto;
+    padding:4px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:24px;
+    font-family:Arial, sans-serif;
+    text-align:center;
+    text-shadow:2px 0 15px #292929;
+    text-decoration:none;
+    letter-spacing:1px;
+    list-style-type:none;
+  }
+
+  a:hover, a:active
+  {
+    background-color:#4cbb17;
+  }
+
+  h1
+  {
+    font-size:96px;
+    margin-top:0;
+    font-family:Arial, sans-serif;
+    //text-shadow:2px 0 15px #292929;
+    letter-spacing:4px;
+    text-decoration:none;
+    color:#000000;
+  }
+
+  #navbar
+  {
+    margin:0px;
+    padding:5px;
+    border-radius:20px 20px 20px 20px;
+    overflow:hidden;
+    list-style-type:none;
+  }
+
+  .lead
+  {
+    background-color:rgba(255,255,255,0.6);
+    border-radius:3px;
+    box-shadow:rgba(0,0,0,0.2) 0 1px 3px;
+    font-family:Sintony, sans-serif;
+  }
+
+  {% block bodycss %}
+  {% endblock %}
+
+	</style>
+
+</head>  
+  
+<body>
+	<div class="navbar">
+		<ul>
+			<li>
+			<a href="{{ url_for("home") }}">home</a>
+			</li>
+			<li>
+			<a href="{{ url_for("datastream") }}">datastream</a>
+			</li>
+		</ul>
+	</div>
+	{% block body %}
+	{% endblock %}
+</body>
+</html>
+{# vim: set syn=htmldjango: #}

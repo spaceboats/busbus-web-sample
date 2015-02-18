@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+{% block bodycss%}
+	table {
+	border: 1px solid white;
+	width: 100%;
+	color: #ffffff;
+	}
+	th, td {
+	border-left: 1px solid white;
+	border-right: 1px solid white;
+	color: #ffffff;
+	}
+	table th:first-child{
+	border-bottom: 1px solid white;
+	}
+	table td:first-child{
+	border-left: none;
+	}
+	table td:last-child{
+	border-right: none;
+	}
+{% endblock %}
+{% block body %}
+	<table>	
+		<tr>
+			<td>Time</td>
+			<td>Bus Route</td>
+			<td>City</td>
+			<td>On Time</td>
+		</tr>
+		<tr>
+			<td>11:49</td>
+			<td>66 to 6th</td>
+			<td>Lawrence</td>
+			<td>na</td>
+		</tr>
+	</table>
+{% endblock %}
+{# vim: set syn=htmldjango: #}
