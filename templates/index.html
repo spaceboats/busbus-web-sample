@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>buses Everywhere!</title>	
+	<title>busbus</title>	
 
 	<style type="text/css">    
   body
@@ -10,27 +10,73 @@
     background-color:#000;
   }
 
+  #navbar li
+  {
+    padding:10px;
+    display:inline;
+    //float:left;
+  }
+
+  ul
+  {
+    margin:0px;
+    padding:0px;
+    overflow:hidden;
+    list-style-type:none;
+  }
+
+  a:link, a:visited
+  {
+    display:block;
+    width:auto;
+    padding:4px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:24px;
+    font-family:Arial, sans-serif;
+    text-align:center;
+    text-shadow:2px 0 15px #292929;
+    text-decoration:none;
+    letter-spacing:1px;
+    list-style-type:none;
+  }
+
+  a:hover, a:active
+  {
+    background-color:#4cbb17;
+  }
+
   h1
   {
-    font-size:48px;
+    font-size:96px;
     margin-top:0;
     font-family:Arial, sans-serif;
-    text-shadow:2px 0 15px #292929;
+    //text-shadow:2px 0 15px #292929;
     letter-spacing:4px;
     text-decoration:none;
-    color:#DDD;
+    color:#000000;
+  }
+
+  #navbar
+  {
+    margin:0px;
+    padding:5px;
+    border-radius:20px 20px 20px 20px;
+    overflow:hidden;
+    list-style-type:none;
   }
 
   #banner
   {
-    width:700px;
-    height:1200px;
-    text-align:center;
-    background-image:url(http://i.imgur.com/a7YwUg7.jpg);
+    width:1200px;
+    height:500px;
+    text-align:left;
+    background-image:url(http://i.imgur.com/8JIVcuZ.jpg);
     background-repeat:no-repeat;
     border-radius:5px;
-    margin:90px auto auto;
-    padding:80px 0;
+    margin:50px auto auto;
+    padding:20px;
+    padding-left:20px;
   }
 
   .lead
@@ -45,6 +91,16 @@
 </head>  
   
 <body>
+	<div class="navbar">
+		<ul>
+			<li>
+				<a href="/home/">home</a>
+			</li>
+			<li>
+				<a href="/datastream/">datastream</a>
+			</li>
+		</ul>
+	</div>
 	<div id="banner">
 		<h1>busbus</h1>
 	</div>
