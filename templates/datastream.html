@@ -37,21 +37,46 @@
 
 {% endblock %}
 {% block body %}
+
 	<div id="body">
-		<table>	
+		<table id="busDataTable">	
 			<tr>
 				<td>time</td>
 				<td>bus route</td>
 				<td>city</td>
 				<td>on time?</td>
 			</tr>
-			<tr>
-				<td>{{ theTime }}</td>
-				<td>{{ s1.route }}</td>
-				<td>{{ s1.city }}</td>
-				<td>{{ s1.onTime }}</td>
-			</tr>
 		</table>
 	</div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
+		$(function(){
+			$.get("/deletelater", function(data){
+				var r = new Array(), j = 8;
+				r[0] = '<tr><td>';
+         			r[1] = 'time';
+				r[2] = '</td><td>';
+				r[3] = 'bus route';
+				r[4] = '</td><td>';
+				r[5] = 'city';
+				r[6] = '</td><td>';
+				r[7] = 'on time?';
+				r[8] = '</td>';
+				for (var key=0, size=data.arrivals.length; key<size; key++){
+					r[++j] ='<tr><td>';
+     					r[++j] = data.arrivals[key].time; 
+     				 	r[++j] = '</td><td>';
+     					r[++j] = data.arrivals[key].route.short_name;
+     					r[++j] = '</td><td>';
+     					r[++j] = data.arrivals[key].route.agency.name;     				 	
+					r[++j] = '</td><td>';
+     					r[++j] = data.arrivals[key].headsign;
+     					r[++j] = '</td></tr>';
+ 				}
+ 				$('#busDataTable').html(r.join(''));				
+			});
+		});
+	</script>
+
 {% endblock %}
 {# vim: set syn=htmldjango: #}
