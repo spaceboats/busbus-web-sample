@@ -1,39 +1,57 @@
 {% extends "_base.html" %}
 {% block bodycss%}
+	#body{
+		padding:50px;
+		width:1200px;
+        	height:500px;
+	}
+		
 	table {
-	border: 1px solid white;
-	width: 100%;
-	color: #ffffff;
+		border: 10px solid green;
+		width: 100%;
+		padding:10px;
+		color: #ffffff;
 	}
-	th, td {
-	border-left: 1px solid white;
-	border-right: 1px solid white;
-	color: #ffffff;
+
+	tr, td {
+		//border-left: 1px solid white;
+		//border-right: 1px solid white;
+		color: #ffffff;
+		font-weight:bold;
+    		font-family:Arial, sans-serif;
+    		text-align:left;
+    		text-shadow:2px 0 15px #292929;
+    		text-decoration:none;
+    		letter-spacing:1px;
 	}
-	table th:first-child{
-	border-bottom: 1px solid white;
+
+	tr:first-child{
+		font-weight:bold;
+		font-size:24px;
+    		font-family:Arial, sans-serif;
+    		text-align:left;
+    		text-shadow:2px 0 15px #292929;
+    		text-decoration:underline;
+    		letter-spacing:1px;
 	}
-	table td:first-child{
-	border-left: none;
-	}
-	table td:last-child{
-	border-right: none;
-	}
+
 {% endblock %}
 {% block body %}
-	<table>	
-		<tr>
-			<td>Time</td>
-			<td>Bus Route</td>
-			<td>City</td>
-			<td>On Time</td>
-		</tr>
-		<tr>
-			<td>11:49</td>
-			<td>66 to 6th</td>
-			<td>Lawrence</td>
-			<td>na</td>
-		</tr>
-	</table>
+	<div id="body">
+		<table>	
+			<tr>
+				<td>time</td>
+				<td>bus route</td>
+				<td>city</td>
+				<td>on time?</td>
+			</tr>
+			<tr>
+				<td>{{ theTime }}</td>
+				<td>{{ s1.route }}</td>
+				<td>{{ s1.city }}</td>
+				<td>{{ s1.onTime }}</td>
+			</tr>
+		</table>
+	</div>
 {% endblock %}
 {# vim: set syn=htmldjango: #}
