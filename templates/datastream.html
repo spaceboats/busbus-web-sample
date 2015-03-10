@@ -1,76 +1,78 @@
 {% extends "_base.html" %}
 {% block bodycss%}
-	#body{
-		padding:50px;
-		width:1200px;
-        	height:500px;
-	}
-		
-	table {
-		border: 10px solid green;
-		width: 100%;
-		padding:10px;
-		color: #ffffff;
-	}
+    #body{
+        margin-left: auto;
+        margin-right: auto;
+        padding:50px;
+        width:1200px;
+        height:500px;
+    }
 
-	tr, td {
-		//border-left: 1px solid white;
-		//border-right: 1px solid white;
-		color: #ffffff;
-		font-weight:bold;
-    		font-family:Arial, sans-serif;
-    		text-align:left;
-    		text-shadow:2px 0 15px #292929;
-    		text-decoration:none;
-    		letter-spacing:1px;
-	}
+    table {
+        border: 10px solid green;
+        width: 100%;
+        padding:10px;
+        color: #ffffff;
+    }
 
-	tr:first-child{
-		font-weight:bold;
-		font-size:24px;
-    		font-family:Arial, sans-serif;
-    		text-align:left;
-    		text-shadow:2px 0 15px #292929;
-    		text-decoration:underline;
-    		letter-spacing:1px;
-	}
+    tr, td {
+        //border-left: 1px solid white;
+        //border-right: 1px solid white;
+        color: #ffffff;
+        font-weight:bold;
+        font-family:Arial, sans-serif;
+        text-align:left;
+        text-shadow:2px 0 15px #292929;
+        text-decoration:none;
+        letter-spacing:1px;
+    }
+
+    tr:first-child{
+        font-weight:bold;
+        font-size:24px;
+        font-family:Arial, sans-serif;
+        text-align:left;
+        text-shadow:2px 0 15px #292929;
+        text-decoration:underline;
+        letter-spacing:1px;
+    }
 
 {% endblock %}
 {% block body %}
 
-	<div id="body">
-		<table id="busDataTable">	
-		</table>
-	</div>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<script>
-		$(function(){
-			$.get("/deletelater", function(data){
-				var r = new Array(), j = 8;
-				r[0] = '<tr><td>';
-         			r[1] = 'time';
-				r[2] = '</td><td>';
-				r[3] = 'bus route';
-				r[4] = '</td><td>';
-				r[5] = 'city';
-				r[6] = '</td><td>';
-				r[7] = 'on time?';
-				r[8] = '</td>';
-				for (var key=0, size=data.arrivals.length; key<size; key++){
-					r[++j] ='<tr><td>';
-     					r[++j] = data.arrivals[key].time; 
-     				 	r[++j] = '</td><td>';
-     					r[++j] = data.arrivals[key].route.short_name;
-     					r[++j] = '</td><td>';
-     					r[++j] = data.arrivals[key].route.agency.name;     				 	
-					r[++j] = '</td><td>';
-     					r[++j] = data.arrivals[key].headsign;
-     					r[++j] = '</td></tr>';
- 				}
- 				$('#busDataTable').html(r.join(''));				
-			});
-		});
-	</script>
+    <div id="body">
+        <table id="busDataTable">	
+        </table>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+        $(function(){
+            $.get("/deletelater", function(data){
+                var r = new Array(), j = 8;
+                r[0] = '<tr><td>';
+                r[1] = 'time';
+                r[2] = '</td><td>';
+                r[3] = 'bus route';
+                r[4] = '</td><td>';
+                r[5] = 'city';
+                r[6] = '</td><td>';
+                r[7] = 'on time?';
+                r[8] = '</td>';
+                for (var key=0, size=data.arrivals.length; key<size; key++){
+                    r[++j] ='<tr><td>';
+                    r[++j] = data.arrivals[key].time; 
+                    r[++j] = '</td><td>';
+                    r[++j] = data.arrivals[key].route.short_name;
+                    r[++j] = '</td><td>';
+                    r[++j] = data.arrivals[key].route.agency.name;     				 	
+                    r[++j] = '</td><td>';
+                    r[++j] = data.arrivals[key].headsign;
+                    r[++j] = '</td></tr>';
+                }
+                $('#busDataTable').html(r.join(''));				
+            });
+        });
+    </script>
 
 {% endblock %}
 {# vim: set syn=htmldjango: #}
