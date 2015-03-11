@@ -52,7 +52,7 @@
         {
             var ct = new Date().getTime() / 1000;
             //ct = Math.floor(ct);
-            var ft = ct + 300;
+            var ft = ct + 60;
             $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data)
             {
                 var r = new Array(), j = 8;
