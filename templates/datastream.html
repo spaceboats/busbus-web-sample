@@ -27,11 +27,11 @@
         letter-spacing:1px;
     }
 
-    tr:first-child{
+    th {
+        text-align:center;
         font-weight:bold;
         font-size:24px;
         font-family:Arial, sans-serif;
-        text-align:left;
         text-shadow:2px 0 15px #292929;
         text-decoration:underline;
         letter-spacing:1px;
@@ -46,32 +46,54 @@
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-        $(function(){
-            $.get("/deletelater", function(data){
+        function refreshTable()
+        {
+            var ct = new Date().getTime() / 1000;
+            //ct = Math.floor(ct);
+            var ft = ct + 300;
+            $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data)
+            {
                 var r = new Array(), j = 8;
-                r[0] = '<tr><td>';
-                r[1] = 'time';
-                r[2] = '</td><td>';
-                r[3] = 'bus route';
-                r[4] = '</td><td>';
-                r[5] = 'city';
-                r[6] = '</td><td>';
-                r[7] = 'on time?';
-                r[8] = '</td>';
-                for (var key=0, size=data.arrivals.length; key<size; key++){
+                r[0] = '<tr><th>';
+                r[1] = 'Time';
+                r[2] = '</th><th>';
+                r[3] = 'Bus Route';
+                r[4] = '</th><th>';
+                r[5] = 'Stop Name';
+                r[6] = '</th><th>';
+                r[7] = 'Headsign';
+                r[8] = '</th>';
+                data.arrivals.sort(compare);
+                for (var key=0, size=data.arrivals.length; key<size; key++)
+                {
                     r[++j] ='<tr><td>';
-                    r[++j] = data.arrivals[key].time; 
+                    //FIXME Shows date but doesn't need to be so verbose.
+                    var time = new Date(data.arrivals[key].time * 1000).getTime();
+                    var d = new Date(time);
+                    r[++j] = d;
                     r[++j] = '</td><td>';
                     r[++j] = data.arrivals[key].route.short_name;
                     r[++j] = '</td><td>';
-                    r[++j] = data.arrivals[key].route.agency.name;     				 	
+                    r[++j] = data.arrivals[key].stop.name;     				 	
                     r[++j] = '</td><td>';
                     r[++j] = data.arrivals[key].headsign;
                     r[++j] = '</td></tr>';
                 }
                 $('#busDataTable').html(r.join(''));				
             });
-        });
+            setTimeout(refreshTable, 5000);
+        }
+
+        $(refreshTable());
+
+        function compare(a,b) {
+            if (a.time < b.time)
+                return -1;
+            else if (a.time > b.time)
+                return 1;
+            else
+                return 0;
+        }
     </script>
 
 {% endblock %}
