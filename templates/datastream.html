@@ -4,7 +4,8 @@
         margin-left: auto;
         margin-right: auto;
         padding:50px;
-        width:1200px;
+        //width:1200px;
+	width:1200px;
         height:500px;
     }
 
@@ -28,7 +29,8 @@
     }
 
     th {
-        text-align:center;
+        //text-align:center;
+	text-align:left;
         font-weight:bold;
         font-size:24px;
         font-family:Arial, sans-serif;
@@ -70,11 +72,14 @@
                     //FIXME Shows date but doesn't need to be so verbose.
                     var time = new Date(data.arrivals[key].time * 1000).getTime();
                     var d = new Date(time);
-                    r[++j] = d;
+                    //r[++j] = d;
+		    r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
                     r[++j] = '</td><td>';
-                    r[++j] = data.arrivals[key].route.short_name;
+                    //r[++j] = data.arrivals[key].route.short_name;
+		    r[++j] = data.arrivals[key].route.id;
                     r[++j] = '</td><td>';
-                    r[++j] = data.arrivals[key].stop.name;     				 	
+                    //r[++j] = data.arrivals[key].stop.name; 
+                    r[++j] = data.arrivals[key].stop.id;     				 	
                     r[++j] = '</td><td>';
                     r[++j] = data.arrivals[key].headsign;
                     r[++j] = '</td></tr>';
