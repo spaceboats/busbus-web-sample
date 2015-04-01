@@ -51,7 +51,6 @@
         function refreshTable()
         {
             var ct = new Date().getTime() / 1000;
-            //ct = Math.floor(ct);
             var ft = ct + 60;
             $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data)
             {
@@ -69,14 +68,11 @@
                 for (var key=0, size=data.arrivals.length; key<size; key++)
                 {
                     r[++j] ='<tr><td>';
-                    //FIXME Shows date but doesn't need to be so verbose.
 		    var d = new Date(data.arrivals[key].time * 1000);
                     r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 		    r[++j] = '</td><td>';
-                    //r[++j] = data.arrivals[key].route.short_name;
 		    r[++j] = data.arrivals[key].route.id;
-                    r[++j] = '</td><td>';
-                    //r[++j] = data.arrivals[key].stop.name; 
+                    r[++j] = '</td><td>'; 
                     r[++j] = data.arrivals[key].stop.id;     				 	
                     r[++j] = '</td><td>';
                     r[++j] = data.arrivals[key].headsign;
