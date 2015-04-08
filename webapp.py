@@ -40,6 +40,13 @@ def datastream():
         
     return flask.render_template('datastream.html', author=author, name=name, theTime=theTime)
 
+@app.route('/search')
+def search():
+    author = "Nick, Monica"
+    name = "Search"
+
+    return flask.render_template('search.html', author=author, name=name)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

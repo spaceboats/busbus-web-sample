@@ -1,5 +1,24 @@
 {% extends "_base.html" %}
 {% block bodycss%}
+
+    *
+    {
+	margin: 0;
+    }
+
+    body
+    {
+	height: 100%;
+    }
+
+    .wrapper
+    {
+	min-height: 500px;
+ 	height: auto !important;
+	height: 100%;
+	margin: 0 auto -4em;
+    }
+
     #banner
     {
         width:1200px;
@@ -12,10 +31,46 @@
         background-image:url("/static/busroutes.jpg");
         background-repeat:no-repeat;
     }
+
+    a:link, a:visited
+    {
+    	display:block;
+    	width:auto;
+    	padding:4px;
+    	color:#FFFFFF;
+    	font-weight:bold;
+    	font-size:24px;
+    	font-family:Arial, sans-serif;
+    	text-align:center;
+    	text-shadow:2px 0 15px #292929;
+    	text-decoration:none;
+    	letter-spacing:1px;
+    	list-style-type:none;
+    }
+
+    a:hover, a:active
+    {
+    	background-color:#4cbb17;
+    }
+
+    .footer, .push
+    {
+	height: 4em;
+    }
+
+
 {% endblock %}
 {% block body %}
-	<div id="banner">
-		<h1>busbus</h1>
-	</div>
+	<body>
+		<div class="wrapper">
+			<div id="banner">
+				<h1>busbus</h1>
+			</div>
+			<div class="push"></div>
+		</div>
+		<div class="footer">
+			<a href="https://github.com/spaceboats/busbus">github repo</a>
+		</div>
+	</body>
 {% endblock %}
 {# vim: set syn=htmldjango: #}

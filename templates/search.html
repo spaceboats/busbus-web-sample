@@ -1,0 +1,58 @@
+{% extends "_base.html" %}
+{% block bodycss%}
+    #body
+    {
+        margin-left: auto;
+        margin-right: auto;
+        padding:50px;
+	width:1200px;
+        height:500px;
+    }
+
+    form
+    {
+        border: 10px solid green;
+        width: 100%;
+        padding:10px;
+        color: #ffffff;
+	font-weight:bold;
+	font-size:24px;
+        font-family:Arial, sans-serif;
+        text-align:left;
+        text-shadow:2px 0 15px #292929;
+        text-decoration:none;
+        letter-spacing:1px;
+
+    }
+{% endblock %}
+
+{% block body %}
+    <div id="body">
+	<form action = "">
+		Select Time:<br>
+		<select>
+			<option value="12:00PM">12:00PM</value>
+			<option value="1:00PM">1:00PM</value>
+		</select>
+		<br><br><br>
+		Select Route:<br>
+		<select>
+			<option value="15">15</value>
+			<option value="36">36</value>
+		</select>
+		<br><br><br>
+		Select Stop:<br>
+		<select>
+			<option value="Stop Name 1">Stop Name 1</value>
+			<option value="Stop Name 2">Stop Name 2</value>
+		</select>
+		<br><br><br>
+		<input type="submit" value="Search">
+	</form>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+       
+    </script>
+{% endblock %}
+{# vim: set syn=htmldjango: #}
