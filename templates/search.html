@@ -29,10 +29,18 @@
 {% block body %}
     <div id="body">
 	<form action = "">
-		Select Time:<br>
-		<select>
-			<option value="12:00PM">12:00PM</value>
-			<option value="1:00PM">1:00PM</value>
+		Select Start Time:<br>
+		<select id="startTime"></select>
+		<select id="startM">
+			<option value="AM">AM</option>
+			<option value="PM">PM</option>
+		</select>
+		<br><br><br>
+		Select End Time:<br>
+		<select id="endTime"></select>
+		<select id="endM">
+			<option value="AM">AM</option>
+			<option value="PM">PM</option>		
 		</select>
 		<br><br><br>
 		Select Route:<br>
@@ -52,7 +60,39 @@
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-       
+    	var date = new Date();
+	var minInterval=15;
+	var hrInterval=1;
+	var arr=[];
+	var theMin = 0;
+	var theHours = 0;
+	date.setMinutes(theMin);
+	date.setHours(theHours);
+	for(var i=1;i<49;i++){
+		if ((i%4) == 0)
+		{
+			theMin = 00;
+			date.setMinutes(theMin);
+			theHours = theHours + hrInterval;
+			date.setHours(theHours);
+		}
+		else
+		{
+			theMin = theMin + minInterval;
+			date.setMinutes(theMin);
+		}
+		if (date.getMinutes() == 0){
+			arr.push(date.getHours() + ':00');
+		} else {
+			arr.push(date.getHours() + ':' + date.getMinutes());
+		}
+	}
+	$.each(arr, function(index, value) {
+		$("#startTime").append("<option>" + value + "</option>");
+	});
+	$.each(arr, function(index, value) {
+		$("#endTime").append("<option>" + value + "</option>");
+	});
     </script>
 {% endblock %}
 {# vim: set syn=htmldjango: #}
