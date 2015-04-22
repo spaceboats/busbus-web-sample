@@ -47,6 +47,13 @@ def search():
 
     return flask.render_template('search.html', author=author, name=name)
 
+@app.route('/searchAgency')	
+def searchAgency():
+	author = "Nick, Monica"
+	name = "SearchAgency"
+	
+	return flask.render_template('searchAgency.html', author=author, name=name)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

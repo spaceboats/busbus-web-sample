@@ -32,98 +32,37 @@
 
 {% block body %}
     <div id="body">
-	<form action = "">
-		Select Start Time:<br>
-		<select id="startTime"></select>
-		<select id="startM">
-			<option value="AM">AM</option>
-			<option value="PM">PM</option>
-		</select>
-		<br><br>
-		Select End Time:<br>
-		<select id="endTime"></select>
-		<select id="endM">
-			<option value="AM">AM</option>
-			<option value="PM">PM</option>		
-		</select>
-		<br><br>
-		Select Route(s):<br>
-		<div class="routes"></div>
-		<br><br>
-		Select Stop:<br>
-		<select>
-			<option value="Stop Name 1">Stop Name 1</value>
-			<option value="Stop Name 2">Stop Name 2</value>
-		</select>
-		<br><br>
-		<input type="submit" value="Search">
+	<form action="{{ url_for('searchAgency') }}">
+		Select the Agency:<br>
+		<select id="agencyList"></select>
+		<input type="submit" value="Search"/>
 	</form>
     </div>
 	
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-		function getTimes(){
-			var date = new Date();
-			var minInterval = 15;
-			var hrInterval = 1;
-			var arr=[];
-			var theMin = 0;
-			var theHours = 0;
-			date.setMinutes(theMin);
-			date.setHours(theHours);
-			for (var i=0;i<48;i++){
-				if ((i%4) == 0){
-					theMin = 0;
-					date.setMinutes(theMin);
-					theHours = theHours + hrInterval;
-					date.setHours(theHours);
-				} else {
-					theMin = theMin + minInterval;
-					date.setMinutes(theMin);
-				}
-				if (date.getMinutes() == 0){
-					arr.push(date.getHours() + ':00');
-				} else {
-					arr.push(date.getHours() + ':' + date.getMinutes());
+		function displayAgencies(){
+			var arr = [];
+			
+			//TODO: WHY WON'T THIS WORK?
+			/*
+			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
+				data.agencies.sort(compare);
+				for (var key=0, size=data.agencies.length; key<size; key++){
+					arr.push(String(data.agencies[key].name));
 				}
 			}
 			$.each(arr, function(index, value) {
-				$("#startTime").append("<option>" + value + "</option>");
+				$("#agencies").append("<option>" + value + "</option>");
 			});
-			$.each(arr, function(index, value) {
-				$("#endTime").append("<option>" + value + "</option>");
-			});
-		}
-				
-		function getRoutes(){
-			var r = new Array(), index=0;
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", function(data){
-				for (var key=0, size=data.arrivals.length; key<size; key++){
-					if (index == 0){
-						$('.routes').append('<input type="radio" name="routes'+key+'" value="'+data.arrivals[key].route.id+'">'+data.arrivals[key].route.id+'<br>');
-						r[0] = data.arrivals[key].route.id;
-						index++;
-					} else {
-						var found = false;
-						for (var i=0; i<index; i++){
-							if (r[i] == data.arrivals[key].route.id){
-								found = true;
-								i = index;
-							}
-						}
-						if(!found){
-							$('.routes').append('<input type="radio" name="routes'+key+'" value="'+data.arrivals[key].route.id+'">'+data.arrivals[key].route.id+'<br>');
-							r[index] = data.arrivals[key].route.id;
-							index++;
-						}
-					}
-				}
-			});
+			*/
+			
+			$('#agencyList').append('<option>KU on Wheels & Lawrence Transit System</option>');
 		}
 		
-		$(getTimes());
-		$(getRoutes());
-	
+		$(displayAgencies());
+		
+		//TODO: HOW TO TRANSFER VALUE SELECTED IN DROP-DOWN BOX TO SEARCHAGENCY.HTML PAGE??
     </script>
 {% endblock %}
 {# vim: set syn=htmldjango: #}
