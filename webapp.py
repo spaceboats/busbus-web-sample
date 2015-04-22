@@ -4,7 +4,7 @@ from collections import deque
 
 app = flask.Flask(__name__)
 
-author = "Nick, Monica, Alex, Zane"
+author = "Nick, Monica, Alex"
 
 @app.route('/')
 def home():
