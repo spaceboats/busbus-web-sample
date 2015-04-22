@@ -4,27 +4,25 @@ from collections import deque
 
 app = flask.Flask(__name__)
 
+author = "Nick, Monica, Alex, Zane"
+
 @app.route('/')
 def home():
-    author = "Nick, Monica"
     name = "Home"
     return flask.render_template('index.html', author=author, name=name)
 
 @app.route('/datastream')
 def datastream():
-    author = "Nick, Monica"
     name = "Datastream"
     return flask.render_template('datastream.html', author=author, name=name)
 
 @app.route('/search')
 def search():
-    author = "Nick, Monica"
     name = "Search"
     return flask.render_template('search.html', author=author, name=name)
 
 @app.route('/searchAgency')	
 def searchAgency():
-	author = "Nick, Monica"
 	name = "SearchAgency"
 	return flask.render_template('searchAgency.html', author=author, name=name)
 

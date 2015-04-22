@@ -1,188 +1,194 @@
 {% extends "_base.html" %}
 {% block bodycss%}
-    #body{
-        margin-left: auto;
-        margin-right: auto;
-        padding:50px;
-		width:1200px;
-        height:500px;
-    }
+#body{
+margin-left: auto;
+margin-right: auto;
+padding:50px;
+width:1200px;
+height:500px;
+}
 
-    form, .routes{
-        width: 100%;
-        padding:10px;
-        color: #ffffff;
-		font-weight:bold;
-		font-size:24px;
-        font-family:Arial, sans-serif;
-        text-align:left;
-        text-shadow:2px 0 15px #292929;
-        text-decoration:none;
-        letter-spacing:1px;
-    }
-	
-	form{
-		border: 10px solid green;
-	}
+form, .routes{
+width: 100%;
+padding:10px;
+color: #FE5C1B;
+font-weight:bold;
+font-size:24px;
+font-family:Arial, sans-serif;
+text-align:left;
+text-shadow:2px 0 15px #FFF;
+text-decoration:none;
+letter-spacing:1px;
+}
+
+form{
+border: 10px solid #13AE6C;
+}
 {% endblock %}
 
 {% block body %}
-    <div id="body">
-	<form action = "">
-	
-		Select Start Time:<br>
-		<select id="startTime"></select>
-		<select id="startM">
-			<option value="AM">AM</option>
-			<option value="PM">PM</option>
-		</select>
-		<br><br>
-		
-		Select End Time:<br>
-		<select id="endTime"></select>
-		<select id="endM">
-			<option value="AM">AM</option>
-			<option value="PM">PM</option>		
-		</select>
-		<br><br>
-		
-		Select Route(s):<br>
-		<div class="routes"></div>
-		<br>
-		
-		Select Stop(s):<br>
-		<div class="stops"></div>
-		<!-- <select id="stops"></select> -->
-		<br>
-		
-		<input type="submit" name="Search"/>
-	</form>
-    </div>
-	
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script>
-	
-		var pID = 0;
-		
-		// Retrieve selected agency name from URL, assign provider ID based on this.
-		function getProviderID(){
-			var queryString = window.location.search.replace(/^\?/, '');
-			queryString = queryString.substring(7, (queryString.length));
-			switch(queryString){
-				case "KU+on+Wheels+%26+Lawrence+Transit+System":
-					pID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
-					break;
-				// Other cases here?
-			}
-		}
-			
-		// Populate times in drop-down selection boxes.
-		function displayTimes(){
-			var date = new Date();
-			var minInterval = 15;
-			var hrInterval = 1;
-			var arr=[];
-			var theMin = 0;
-			var theHours = 0;
-			date.setMinutes(theMin);
-			date.setHours(theHours);
-			for (var i=0;i<48;i++){
-				if ((i%4) == 0){
-					theMin = 0;
-					date.setMinutes(theMin);
-					theHours = theHours + hrInterval;
-					date.setHours(theHours);
-				} else {
-					theMin = theMin + minInterval;
-					date.setMinutes(theMin);
-				}
-				if (date.getMinutes() == 0){
-					arr.push(date.getHours() + ':00');
-				} else {
-					arr.push(date.getHours() + ':' + date.getMinutes());
-				}
-			}
-			$.each(arr, function(index, value) {
-				$("#startTime").append("<option>" + value + "</option>");
-			});
-			$.each(arr, function(index, value) {
-				$("#endTime").append("<option>" + value + "</option>");
-			});
-		}
-		
-		// Should display available routes to choose from based on provider ID.
-		// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
-		function displayRoutes(){
-			var r = new Array(), index=0;
-			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", function(data){
-				for (var key=0, size=data.routes.length; key<size; key++){
-					if (index == 0){
-						$('.routes').append('<input type="radio" name="routes'+key+'" value="'+data.routes[key].id+'">'+data.routes[key].id+'<br>');
-						r[0] = data.routes[key].id;
-						index++;
-					} else {
-						var found = false;
-						for (var i=0; i<index; i++){
-							if (r[i] == data.routes[key].id){
-								found = true;
-								i = index;
-							}
-						}
-						if(!found){
-							$('.routes').append('<input type="radio" name="routes'+key+'" value="'+data.routes[key].id+'">'+data.routes[key].id+'<br>');
-							r[index] = data.routes[key].id;
-							index++;
-						}
-					}
-				}
-			});
-		}
-		
-		// Should display available stops to choose from based on provider ID.
-		// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
-		function displayStops(){
-			//var arr=[];
-			var r = new Array(), index=0;
-			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", function(data){
-				for (var key=0, size=data.stops.length; key<size; key++){
-					if (index == 0){
-						//arr.push(data.stops[key].name);
-						$('.stops').append('<input type="radio" name="stops'+key+'" value="'+data.stops[key].name+'">'+data.stops[key].name+'<br>');
-						r[0] = data.stops[key].name;
-						index++;
-					} else {
-						var found = false;
-						for (var i=0; i<index; i++){
-							if(r[i] == data.stops[key].name){
-								found = true;
-								i = index;
-							}
-						}
-						if(!found){
-							//arr.push(data.stops[key].name);
-							$('.stops').append('<input type="radio" name="stops'+key+'" value="'+data.stops[key].name+'">'+data.stops[key].name+'<br>');
-							r[index] = data.stops[key].name;
-							index++;
-						}
-					}
-				}
-			});
-			/*
-			$.each(arr, function(index, value) {
-				$(".stops").append("<option>" + value + "</option>");
-			});
-			*/
-		}
-		
-		$(getProviderID());
-		$(displayTimes());
-		$(displayRoutes());
-		$(displayStops());
-		
-		//TODO: HOW TO PASS SELECTED VALUES TO FUNCTION/PAGE THAT DISPLAYS RESULTS
-	
-    </script>
+<div id="body">
+    <form action = "">
+
+        Select Start Time:<br>
+        <select id="startTime"></select>
+        <select id="startM">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
+        <br><br>
+
+        Select End Time:<br>
+        <select id="endTime"></select>
+        <select id="endM">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>		
+        </select>
+        <br><br>
+
+        Select Route(s):<br>
+        <select class='routeDropList'></select>
+        <br>
+
+        Select Stop(s):<br>
+        <div class="stops"></div>
+        <!-- <select id="stops"></select> -->
+        <br>
+
+        <input type="submit" name="Search"/>
+    </form>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+
+    var pID = 0;
+
+    // Retrieve selected agency name from URL, assign provider ID based on this.
+    function getProviderID(){
+        var queryString = window.location.search.replace(/^\?/, '');
+        queryString = queryString.substring(7, (queryString.length));
+        switch(queryString){
+            case "KU+on+Wheels+%26+Lawrence+Transit+System":
+                pID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
+                break;
+                // Other cases here?
+        }
+    }
+
+// Populate times in drop-down selection boxes.
+function displayTimes(){
+    var date = new Date();
+    var minInterval = 15;
+    var hrInterval = 1;
+    var arr=[];
+    var theMin = 0;
+    var theHours = 0;
+    date.setMinutes(theMin);
+    date.setHours(theHours);
+    for (var i=0;i<48;i++){
+        if ((i%4) == 0){
+            theMin = 0;
+            date.setMinutes(theMin);
+            theHours = theHours + hrInterval;
+            date.setHours(theHours);
+        } else {
+            theMin = theMin + minInterval;
+            date.setMinutes(theMin);
+        }
+        if (date.getMinutes() == 0){
+            arr.push(date.getHours() + ':00');
+        } else {
+            arr.push(date.getHours() + ':' + date.getMinutes());
+        }
+    }
+    $.each(arr, function(index, value) {
+        $("#startTime").append("<option>" + value + "</option>");
+    });
+    $.each(arr, function(index, value) {
+        $("#endTime").append("<option>" + value + "</option>");
+    });
+}
+
+// Should display available routes to choose from based on provider ID.
+// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
+function displayRoutes(){
+    var r = new Array(), index=0;
+    //TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
+    $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", function(data){
+        for (var key=0, size=data.routes.length; key<size; key++){
+            $('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
+            /*
+               $('.routes').append('<input type="checkbox" name="routes'+key+'" value="'+data.routes[key].id+'">'+data.routes[key].id+'<br>');
+               r[key] = data.routes[key].id;
+               if (index == 0){
+               $('.routes').append('<input type="checkbox" name="routes'+key+'" value="'+data.routes[key].id+'">'+data.routes[key].id+'<br>');
+               r[0] = data.routes[key].id;
+               index++;
+               }
+
+               else {
+               var found = false;
+               for (var i=0; i<index; i++){
+            //if (r[i] == data.routes[key].id){
+            //found = true;
+            //i = index;
+            }
+            }
+            if(!found){
+            $('.routes').append('<input type="checkbox" name="routes'+key+'" value="'+data.routes[key].id+'">'+data.routes[key].id+'<br>');
+            r[index] = data.routes[key].id;
+            index++;
+            }
+            }*/
+        }
+    });
+}
+
+// Should display available stops to choose from based on provider ID.
+// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
+function displayStops(){
+    //var arr=[];
+    var r = new Array(), index=0;
+    //TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
+    $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", function(data){
+        for (var key=0, size=data.stops.length; key<size; key++){
+            if (index == 0){
+                //arr.push(data.stops[key].name);
+                $('.stops').append('<input type="radio" name="stops'+key+'" value="'+data.stops[key].name+'">'+data.stops[key].name+'<br>');
+                r[0] = data.stops[key].name;
+                index++;
+            } else {
+                var found = false;
+                for (var i=0; i<index; i++){
+                    if(r[i] == data.stops[key].name){
+                        found = true;
+                        i = index;
+                    }
+                }
+                if(!found){
+                    //arr.push(data.stops[key].name);
+                    $('.stops').append('<input type="radio" name="stops'+key+'" value="'+data.stops[key].name+'">'+data.stops[key].name+'<br>');
+                    r[index] = data.stops[key].name;
+                    index++;
+                }
+            }
+        }
+    });
+    /*
+       $.each(arr, function(index, value) {
+       $(".stops").append("<option>" + value + "</option>");
+       });
+     */
+}
+
+$(getProviderID());
+$(displayTimes());
+$(displayRoutes());
+$(displayStops());
+
+//TODO: HOW TO PASS SELECTED VALUES TO FUNCTION/PAGE THAT DISPLAYS RESULTS
+
+</script>
 {% endblock %}
 {# vim: set syn=htmldjango: #}
