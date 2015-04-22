@@ -61,6 +61,22 @@
 	
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
+	
+		var pID = 0;
+		
+		// Retrieve selected agency name from URL, assign provider ID based on this.
+		function getProviderID(){
+			var queryString = window.location.search.replace(/^\?/, '');
+			queryString = queryString.substring(7, (queryString.length));
+			switch(queryString){
+				case "KU+on+Wheels+%26+Lawrence+Transit+System":
+					pID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
+					break;
+				// Other cases here?
+			}
+		}
+			
+		// Populate times in drop-down selection boxes.
 		function displayTimes(){
 			var date = new Date();
 			var minInterval = 15;
@@ -93,9 +109,12 @@
 				$("#endTime").append("<option>" + value + "</option>");
 			});
 		}
-				
+		
+		// Should display available routes to choose from based on provider ID.
+		// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
 		function displayRoutes(){
 			var r = new Array(), index=0;
+			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
 			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", function(data){
 				for (var key=0, size=data.routes.length; key<size; key++){
 					if (index == 0){
@@ -120,9 +139,12 @@
 			});
 		}
 		
+		// Should display available stops to choose from based on provider ID.
+		// TODO: SHOULD USER BE ABLE TO SELECT: MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
 		function displayStops(){
 			//var arr=[];
 			var r = new Array(), index=0;
+			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
 			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", function(data){
 				for (var key=0, size=data.stops.length; key<size; key++){
 					if (index == 0){
@@ -154,10 +176,11 @@
 			*/
 		}
 		
+		$(getProviderID());
 		$(displayTimes());
 		$(displayRoutes());
 		$(displayStops());
-		//TODO: HOW SHOULD ROUTES/STOPS BE SELECTED? MORE THAN ONE (I.E. RADIO BUTTON), OR ONLY ONE (I.E. DROP-DOWN LIST)?
+		
 		//TODO: HOW TO PASS SELECTED VALUES TO FUNCTION/PAGE THAT DISPLAYS RESULTS
 	
     </script>

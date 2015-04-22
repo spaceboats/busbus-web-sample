@@ -48,12 +48,10 @@
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-        function refreshTable()
-        {
+        function refreshTable(){
             var ct = new Date().getTime() / 1000;
             var ft = ct + 60;
-            $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data)
-            {
+            $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data){
                 var r = new Array(), j = 8;
                 r[0] = '<tr><th>';
                 r[1] = 'Time';
@@ -65,13 +63,12 @@
                 r[7] = 'Headsign';
                 r[8] = '</th>';
                 data.arrivals.sort(compare);
-                for (var key=0, size=data.arrivals.length; key<size; key++)
-                {
+                for (var key=0, size=data.arrivals.length; key<size; key++){
                     r[++j] ='<tr><td>';
-		    var d = new Date(data.arrivals[key].time * 1000);
+					var d = new Date(data.arrivals[key].time * 1000);
                     r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
-		    r[++j] = '</td><td>';
-		    r[++j] = data.arrivals[key].route.id;
+					r[++j] = '</td><td>';
+					r[++j] = data.arrivals[key].route.id;
                     r[++j] = '</td><td>'; 
                     r[++j] = data.arrivals[key].stop.id;     				 	
                     r[++j] = '</td><td>';
@@ -85,7 +82,7 @@
 
         $(refreshTable());
 
-        function compare(a,b) {
+        function compare(a,b){
             if (a.time < b.time)
                 return -1;
             else if (a.time > b.time)

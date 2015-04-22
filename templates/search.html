@@ -1,16 +1,14 @@
 {% extends "_base.html" %}
 {% block bodycss%}
-    #body
-    {
+    #body{
         margin-left: auto;
         margin-right: auto;
         padding:50px;
-	width:1200px;
+		width:1200px;
         height:500px;
     }
 
-    form, .routes
-    {
+    form, .routes{
         width: 100%;
         padding:10px;
         color: #ffffff;
@@ -21,20 +19,18 @@
         text-shadow:2px 0 15px #292929;
         text-decoration:none;
         letter-spacing:1px;
-
     }
 	
-	form
-	{
+	form{
 		border: 10px solid green;
 	}
 {% endblock %}
 
 {% block body %}
     <div id="body">
-	<form action="{{ url_for('searchAgency') }}">
+	<form name="theForm" action="{{ url_for('searchAgency') }}">
 		Select the Agency:<br>
-		<select id="agencyList"></select>
+		<select name="agency" id="agencyList"></select>
 		<input type="submit" value="Search"/>
 	</form>
     </div>
@@ -47,7 +43,6 @@
 			//TODO: WHY WON'T THIS WORK?
 			/*
 			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
-				data.agencies.sort(compare);
 				for (var key=0, size=data.agencies.length; key<size; key++){
 					arr.push(String(data.agencies[key].name));
 				}
@@ -57,12 +52,15 @@
 			});
 			*/
 			
+			// Manually adding only working agency for now.
 			$('#agencyList').append('<option>KU on Wheels & Lawrence Transit System</option>');
 		}
 		
 		$(displayAgencies());
+
+		//TODO: PRETTY SURE WAY I MADE THIS FORM OPEN ANOTHER HTML PAGE AND FETCHED THE AGENCY-SELECTED FROM THE URL
+		//      ISN'T THE BEST WAY TO DO THIS. 
 		
-		//TODO: HOW TO TRANSFER VALUE SELECTED IN DROP-DOWN BOX TO SEARCHAGENCY.HTML PAGE??
     </script>
 {% endblock %}
 {# vim: set syn=htmldjango: #}

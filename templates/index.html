@@ -1,26 +1,22 @@
 {% extends "_base.html" %}
 {% block bodycss%}
 
-    *
-    {
+    *{
 	margin: 0;
     }
 
-    body
-    {
+    body{
 	height: 100%;
     }
 
-    .wrapper
-    {
+    .wrapper{
 	min-height: 500px;
  	height: auto !important;
 	height: 100%;
 	margin: 0 auto -4em;
     }
 
-    #banner
-    {
+    #banner{
         width:1200px;
         height:500px;
         text-align:left;
@@ -32,8 +28,7 @@
         background-repeat:no-repeat;
     }
 
-    a:link, a:visited
-    {
+    a:link, a:visited{
     	display:block;
     	width:auto;
     	padding:4px;
@@ -48,16 +43,13 @@
     	list-style-type:none;
     }
 
-    a:hover, a:active
-    {
+    a:hover, a:active{
     	background-color:#4cbb17;
     }
 
-    .footer, .push
-    {
+    .footer, .push{
 	height: 4em;
     }
-
 
 {% endblock %}
 {% block body %}
