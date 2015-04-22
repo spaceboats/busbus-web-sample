@@ -1,26 +1,57 @@
 {% extends "_base.html" %}
 {% block bodycss%}
-    #body{
+    #searchAgs, #searchOpts{
         margin-left: auto;
         margin-right: auto;
         padding:50px;
 		width:1200px;
         height:500px;
     }
-
 {% endblock %}
 
 {% block body %}
-    <div id="body">
-	<form name="theForm" action="{{ url_for('searchAgency') }}">
+    <div id="searchAgs">
 		Select the Agency:<br>
-		<select name="agency" id="agencyList"></select>
-		<input type="submit" value="Search"/>
-	</form>
-    </div>
+		<select id="agencyList">
+			<option value="select">Select agency</option>
+		</select>
+		<button id="b1">Search</button>
+	</div>
 	
+	<div id="searchOpts" style="display:none">
+		<form name="searchForm">
+			Select Start Time:<br>
+			<select id="startTime"></select>
+			<select id="startM">
+				<option value="AM">AM</option>
+				<option value="PM">PM</option>
+			</select>
+			<br><br>
+	
+			Select End Time:<br>
+			<select id="endTime"></select>
+			<select id="endM">
+				<option value="AM">AM</option>
+				<option value="PM">PM</option>		
+			</select>
+			<br><br>
+
+			Select Route(s):<br>
+			<select class='routeDropList'></select>
+			<br><br>
+
+			Select Stop(s):<br>
+			<select class='stopDropList'></select>
+			<br><br>
+
+			<button id="b2">Search</button>
+		</form>
+	</div>
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
+		var providerID = 0;
+		
 		function displayAgencies(){
 			var arr = [];
 			
@@ -40,10 +71,80 @@
 			$('#agencyList').append('<option>KU on Wheels & Lawrence Transit System</option>');
 		}
 		
+		// Populate times in drop-down selection boxes.
+		function displayTimes(){
+			var date = new Date();
+			var minInterval = 15;
+			var hrInterval = 1;
+			var arr=[];
+			var theMin = 0;
+			var theHours = 0;
+			date.setMinutes(theMin);
+			date.setHours(theHours);
+			for (var i=0;i<48;i++){
+				if ((i%4) == 0){
+					theMin = 0;
+					date.setMinutes(theMin);
+					theHours = theHours + hrInterval;
+					date.setHours(theHours);
+				} else {
+					theMin = theMin + minInterval;
+					date.setMinutes(theMin);
+				}
+				if (date.getMinutes() == 0){
+					arr.push(date.getHours() + ':00');
+				} else {
+					arr.push(date.getHours() + ':' + date.getMinutes());
+				}
+			}
+			$.each(arr, function(index, value) {
+				$("#startTime").append("<option>" + value + "</option>");
+			});
+			$.each(arr, function(index, value) {
+				$("#endTime").append("<option>" + value + "</option>");
+			});
+		}
+		
+		// Should display available routes to choose from based on provider ID.
+		function displayRoutes(){
+			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
+			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", function(data){
+				for (var key=0, size=data.routes.length; key<size; key++){
+					$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
+				}
+			});
+		}
+		
+		// Should display available stops to choose from based on provider ID.
+		function displayStops(){
+			//TODO: HOW TO FILTER BY PROVIDER ID WHEN RETRIEVING ROUTE INFO?
+			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", function(data){
+				for (var key=0, size=data.stops.length; key<size; key++){
+					$('.stopDropList').append('<option value="'+data.stops[key].name+'">'+data.stops[key].name+'</option>');
+				}
+			});
+		}
+		
+		function displayOptions(hide, show){
+			var selectedAgency = document.getElementById('agencyList').value;
+			switch(selectedAgency){
+				case "KU on Wheels & Lawrence Transit System":
+					providerID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
+                break;
+                // Other cases here?
+			}
+			
+			displayTimes();
+			displayStops();
+			displayRoutes();
+			document.getElementById(show).style.display = 'block';
+			document.getElementById(hide).style.display = 'none';		
+		}
+		
 		$(displayAgencies());
-
-		//TODO: PRETTY SURE WAY I MADE THIS FORM OPEN ANOTHER HTML PAGE AND FETCHED THE AGENCY-SELECTED FROM THE URL
-		//      ISN'T THE BEST WAY TO DO THIS. 
+		document.getElementById('b1').addEventListener('click',function(e){
+			displayOptions('searchAgs','searchOpts');
+		});
 		
     </script>
 {% endblock %}
