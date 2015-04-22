@@ -68,7 +68,7 @@
 			*/
 			
 			// Manually adding only working agency for now.
-			$('#agencyList').append('<option>KU on Wheels & Lawrence Transit System</option>');
+			$('#agencyList').append('<option value="6181e04e3c26ace60a8e709175c96298d8e5ef08">KU on Wheels & Lawrence Transit System</option>');
 		}
 		
 		// Populate times in drop-down selection boxes.
@@ -126,14 +126,7 @@
 		}
 		
 		function displayOptions(hide, show){
-			var selectedAgency = document.getElementById('agencyList').value;
-			switch(selectedAgency){
-				case "KU on Wheels & Lawrence Transit System":
-					providerID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
-                break;
-                // Other cases here?
-			}
-			
+			providerID = $('#agencyList').val();
 			displayTimes();
 			displayStops();
 			displayRoutes();
