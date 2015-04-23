@@ -15,14 +15,21 @@
 	
 	#searchAgs, #searchOpts{
       border: 10px solid #13AE6C;
+	  background-color:#3e3436;
       font-family:Arial, sans-serif;
-      color: #FE5C1B;
+      color: #FFFFFF;
       padding: 10px;
-      //width: 100%
       text-align:left;
       font-weight:bold;
       font-size:24px;
       letter-spacing:1px;
+  }	
+  
+  #agencyList, #startTime, #startM, #endTime, #endM, .routeDropList, .stopDropList, button{
+	font-size:24px;
+	background-color:#3e3436;
+	color:#FFFFFF;
+	border-color:#13AE6C;
   }
 {% endblock %}
 
@@ -31,7 +38,7 @@
 	<div id="searchAgs">
 		Select the Agency:<br>
 		<select id="agencyList">
-			<option value="select">Select agency</option>
+			<option value="select">Select</option>
 		</select>
 		<button id="b1">Search</button>
 	</div>
@@ -66,8 +73,7 @@
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script>
-		
+<script>			
 	// Populate agencies in drop-down selection box.
 	function displayAgencies(){
 		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
