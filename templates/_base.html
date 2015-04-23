@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>busbus</title>	
 <style type="text/css">    
-	
   body{
     background-color:#FFF;
   }
@@ -43,13 +42,58 @@
     text-decoration:none;
     color:#000000;
   }
-
-  #navbar{
-    margin:0px;
-    padding:5px;
-    border-radius:20px 20px 20px 20px;
-    overflow:hidden;
-    list-style-type:none;
+  
+  .clearfix:after{
+	display:block;
+	clear:both;
+  }
+  
+  .navbar{
+	width:100%;
+	box-shadow:0px 1px 3px rgba(0,0,0,0.2);
+	background:#3e3436;
+  }
+  
+  .menu{
+	width:1000px;
+	margin:0px auto;
+  }
+  
+  .menu li{
+	margin:0px;
+	list-style:none;
+  }
+  
+  .menu a{
+	transition:all linear 0.15s;
+	color:#919191;
+  }
+  
+  .menu li:hover > a, .menu .current-item > a{
+	text-decoration:none;
+	color:#13AE6C;
+  }
+  
+  .menu > ul > li{
+	float:left;
+	display:inline-block;
+	position:relative;
+	font-size:19px;
+  }
+  
+  .menu > ul > li > a{
+	padding:10px 40px;
+	display:inline-block;
+	text-shadow:0px 1px 0px rgba(0,0,0,0.4);
+  }
+  
+  .menu > ul > li:hover > a, .menu > ul > .current-item > a{
+	background:#2e2728;
+  }
+  
+  .menu li:hover .sub-menu{
+	z-index:1;
+	opacity:1;
   }
 
   .lead{
@@ -60,68 +104,50 @@
   }
 
   table{
-      border: 10px solid #13AE6C;
-      padding: 10px;
-      width: 100%;
+	border: 10px solid #13AE6C;
+    padding: 10px;
+    width: 100%;
   }
 
-  #searchAgs, #searchOpts{
-      border: 10px solid #13AE6C;
-      font-family:Arial, sans-serif;
-      color: #FE5C1B;
-      padding: 10px;
-      width: 100%
-      text-align:left;
-      font-weight:bold;
-      font-size:24px;
-      letter-spacing:1px;
+  tr, td{
+    color: #FE5C1B;
+    font-weight:bold;
+    font-family:Arial, sans-serif;
+    text-align:left;
+    text-decoration:none;
+    letter-spacing:1px;
   }
 
-  tr, td {
-      //border-left: 1px solid white;
-      //border-right: 1px solid white;
-      color: #FE5C1B;
-      font-weight:bold;
-      font-family:Arial, sans-serif;
-      text-align:left;
-      text-decoration:none;
-      letter-spacing:1px;
+  th{
+    text-align:left;
+    font-weight:bold;
+    font-size:24px;
+    color: #1EA068;
+    font-family:Arial, sans-serif;
+    text-decoration:underline;
+    letter-spacing:1px;
   }
-
-  th {
-      //text-align:center;
-      text-align:left;
-      font-weight:bold;
-      font-size:24px;
-      color: #1EA068;
-      font-family:Arial, sans-serif;
-      text-decoration:underline;
-      letter-spacing:1px;
+  
+  .push{
+	height: 4em;
   }
-
-
-  {% block bodycss %}
-  {% endblock %}
-
+{% block bodycss %}
+{% endblock %}
 </style>
 </head>  
   
 <body>
 	<div class="navbar">
-		<ul>
-			<li>
-			<a href="{{ url_for("home") }}">home</a>
-			</li>
-			<li>
-			<a href="{{ url_for("datastream") }}">datastream</a>
-			</li>
-			<li>
-			<a href="{{ url_for("search") }}">search</a>
-			</li>
-		</ul>
+		<nav class="menu">
+			<ul class="clearfix">
+				<li><a href="{{ url_for("home") }}">home</a></li>
+				<li><a href="{{ url_for("datastream") }}">datastream</a></li>
+				<li><a href="{{ url_for("search") }}">search</a></li>
+			</ul>
+		</nav>
 	</div>
-	{% block body %}
-	{% endblock %}
 </body>
 </html>
+{% block body %}
+{% endblock %}
 {# vim: set syn=htmldjango: #}

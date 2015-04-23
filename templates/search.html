@@ -1,136 +1,153 @@
 {% extends "_base.html" %}
 {% block bodycss%}
-    #searchAgs, #searchOpts{
+
+    *{
+	margin: 0;
+    }
+	
+    #body{
         margin-left: auto;
         margin-right: auto;
         padding:50px;
 		width:1200px;
         height:500px;
     }
+	
+	#searchAgs, #searchOpts{
+      border: 10px solid #13AE6C;
+      font-family:Arial, sans-serif;
+      color: #FE5C1B;
+      padding: 10px;
+      //width: 100%
+      text-align:left;
+      font-weight:bold;
+      font-size:24px;
+      letter-spacing:1px;
+  }
 {% endblock %}
 
 {% block body %}
-    <div id="searchAgs">
+<div id="body">
+	<div id="searchAgs">
 		Select the Agency:<br>
 		<select id="agencyList">
 			<option value="select">Select agency</option>
 		</select>
 		<button id="b1">Search</button>
 	</div>
-	
+
 	<div id="searchOpts" style="display:none">
-		<form name="searchForm">
-			Select Start Time:<br>
-			<select id="startTime"></select>
-			<select id="startM">
-				<option value="AM">AM</option>
-				<option value="PM">PM</option>
-			</select>
-			<br><br>
+		Select Start Time:<br>
+		<select id="startTime"></select>
+		<select id="startM">
+			<option value="AM">AM</option>
+			<option value="PM">PM</option>	
+		</select>
+		<br><br>
 	
-			Select End Time:<br>
-			<select id="endTime"></select>
-			<select id="endM">
-				<option value="AM">AM</option>
-				<option value="PM">PM</option>		
-			</select>
-			<br><br>
+		Select End Time:<br>
+		<select id="endTime"></select>
+		<select id="endM">
+			<option value="AM">AM</option>
+			<option value="PM">PM</option>		
+		</select>
+		<br><br>
 
-			Select Route:<br>
-			<select class='routeDropList'></select>
-			<br><br>
+		Select Route:<br>
+		<select class='routeDropList'></select>
+		<br><br>
 
-			Select Stop:<br>
-			<select class='stopDropList'></select>
-			<br><br>
+		Select Stop:<br>
+		<select class='stopDropList'></select>
+		<br><br>
 
-			<button id="b2">Search</button>
-		</form>
+		<button id="b2">Search</button>
 	</div>
+</div>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
 		
-		// Populate agencies in drop-down selection box.
-		function displayAgencies(){
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
-				for (var key=0, size=data.agencies.length; key<size; key++){
-					$('#agencyList').append('<option value="'+data.agencies[key].provider.id+'">'+data.agencies[key].name+'</option>');
-				}
-			});
-		}
-		
-		// Populate times in drop-down selection boxes.
-		function displayTimes(){
-			var date = new Date();
-			var minInterval = 15;
-			var hrInterval = 1;
-			var arr=[];
-			var theMin = 0;
-			var theHours = 0;
-			date.setMinutes(theMin);
-			date.setHours(theHours);
-			for (var i=0;i<48;i++){
-				if ((i%4) == 0){
-					theMin = 0;
-					date.setMinutes(theMin);
-					theHours = theHours + hrInterval;
-					date.setHours(theHours);
-				} else {
-					theMin = theMin + minInterval;
-					date.setMinutes(theMin);
-				}
-				if (date.getMinutes() == 0){
-					arr.push(date.getHours() + ':00');
-				} else {
-					arr.push(date.getHours() + ':' + date.getMinutes());
-				}
+	// Populate agencies in drop-down selection box.
+	function displayAgencies(){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
+			for (var key=0, size=data.agencies.length; key<size; key++){
+				$('#agencyList').append('<option value="'+data.agencies[key].provider.id+'">'+data.agencies[key].name+'</option>');
 			}
-			$.each(arr, function(index, value) {
-				$("#startTime").append("<option>" + value + "</option>");
-			});
-			$.each(arr, function(index, value) {
-				$("#endTime").append("<option>" + value + "</option>");
-			});
-		}
-		
-		// Displays available routes to choose from based on provider ID.
-		function displayRoutes(pID){
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", { "provider.id": pID }, function(data){
-				for (var key=0, size=data.routes.length; key<size; key++){
-					$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
-				}
-			});
-		}
-		
-		// Displays available stops to choose from based on provider ID.
-		function displayStops(pID){
-			$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", { "provider.id": pID },function(data){
-				for (var key=0, size=data.stops.length; key<size; key++){
-					$('.stopDropList').append('<option value="'+data.stops[key].id+'">'+data.stops[key].id+'</option>');
-				}
-			});
-		}
-		
-		// Sets providerID to value of agencyList selection.
-		// Populates other search option fields based on this ID.
-		// Hides html div id "hide" and shows html div id "display".
-		function displayOptions(hide, display){
-			var providerID = $('#agencyList').val();
-			displayTimes();
-			displayStops(providerID);
-			displayRoutes(providerID);
-			document.getElementById(display).style.display = 'block';
-			document.getElementById(hide).style.display = 'none';		
-		}
-		
-		// Calls displayOptions function upon press of first Search button.
-		document.getElementById('b1').addEventListener('click',function(e){
-			displayOptions('searchAgs','searchOpts');
 		});
+	}
 		
-		$(displayAgencies());
+	// Populate times in drop-down selection boxes.
+	function displayTimes(){
+		var date = new Date();
+		var minInterval = 15;
+		var hrInterval = 1;
+		var arr=[];
+		var theMin = 0;
+		var theHours = 0;
+		date.setMinutes(theMin);
+		date.setHours(theHours);
+		for (var i=0;i<48;i++){
+			if ((i%4) == 0){
+				theMin = 0;
+				date.setMinutes(theMin);
+				theHours = theHours + hrInterval;
+				date.setHours(theHours);
+			} else {
+				theMin = theMin + minInterval;
+				date.setMinutes(theMin);
+			}
+			if (date.getMinutes() == 0){
+				arr.push(date.getHours() + ':00');
+			} else {
+				arr.push(date.getHours() + ':' + date.getMinutes());
+			}
+		}
+		$.each(arr, function(index, value) {
+			$("#startTime").append("<option>" + value + "</option>");
+		});
+		$.each(arr, function(index, value) {
+			$("#endTime").append("<option>" + value + "</option>");
+		});
+	}
 		
-    </script>
+	// Displays available routes to choose from based on provider ID.
+	function displayRoutes(pID){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", { "provider.id": pID }, function(data){
+			for (var key=0, size=data.routes.length; key<size; key++){
+				$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
+			}
+		});
+	}
+		
+	// Displays available stops to choose from based on provider ID.
+	function displayStops(pID){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", { "provider.id": pID },function(data){
+			for (var key=0, size=data.stops.length; key<size; key++){
+				$('.stopDropList').append('<option value="'+data.stops[key].id+'">'+data.stops[key].id+'</option>');
+			}
+		});
+	}
+		
+	// Sets providerID to value of agencyList selection.
+	// Populates other search option fields based on this ID.
+	// Hides html div id "hide" and shows html div id "display".
+	function displayOptions(hide, display){
+		var providerID = $('#agencyList').val();
+		displayTimes();
+		displayStops(providerID);
+		displayRoutes(providerID);
+		document.getElementById(display).style.display = 'block';
+		document.getElementById(hide).style.display = 'none';		
+	}
+		
+	// Calls displayOptions function upon press of first Search button.
+	document.getElementById('b1').addEventListener('click',function(e){
+		displayOptions('searchAgs','searchOpts');
+	});
+		
+	$(displayAgencies());
+		
+</script>
 {% endblock %}
 {# vim: set syn=htmldjango: #}

@@ -2,18 +2,18 @@
 {% block bodycss%}
 
     *{
-	margin: 0;
+		margin: 0;
     }
 
     body{
-	height: 100%;
+		height: 100%;
     }
 
     .wrapper{
-	min-height: 500px;
- 	height: auto !important;
-	height: 100%;
-	margin: 0 auto -4em;
+		min-height: 500px;
+		height: auto !important;
+		height: 100%;
+		margin: 0 auto -4em;
     }
 
     #banner{
@@ -28,12 +28,8 @@
         background-repeat:no-repeat;
     }
 
-    a:hover, a:active{
-    	background-color:#13AE6C;
-    }
-
-    .footer, .push{
-	height: 4em;
+    .push{
+		height: 4em;
     }
 
 {% endblock %}
@@ -45,8 +41,12 @@
 			</div>
 			<div class="push"></div>
 		</div>
-		<div class="footer">
-			<a href="https://github.com/spaceboats/busbus">github repo</a>
+		<div class="navbar">
+			<nav class="menu">
+				<ul class="clearfix">
+					<li><a href="https://github.com/spaceboats/busbus">github repo</a></li>
+				</ul>
+			</nav>
 		</div>
 	</body>
 {% endblock %}
