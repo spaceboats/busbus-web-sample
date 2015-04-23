@@ -13,7 +13,7 @@
         height:500px;
     }
 	
-	#searchAgs, #searchOpts{
+	#searchAgs, #searchOpts, #results{
       border: 10px solid #13AE6C;
 	  background-color:#3e3436;
       font-family:Arial, sans-serif;
@@ -70,10 +70,18 @@
 
 		<button id="b2">Search</button>
 	</div>
+	
+	<div id="results" style="display:none">
+		Results:<br>
+		<ul id="theResults"></ul>
+	</div>
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>			
+
+	var providerID;
+	
 	// Populate agencies in drop-down selection box.
 	function displayAgencies(){
 		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
@@ -118,8 +126,8 @@
 	}
 		
 	// Displays available routes to choose from based on provider ID.
-	function displayRoutes(pID){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", { "provider.id": pID }, function(data){
+	function displayRoutes(){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", { "provider.id": providerID }, function(data){
 			for (var key=0, size=data.routes.length; key<size; key++){
 				$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
 			}
@@ -127,29 +135,59 @@
 	}
 		
 	// Displays available stops to choose from based on provider ID.
-	function displayStops(pID){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", { "provider.id": pID },function(data){
+	function displayStops(){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", { "provider.id": providerID },function(data){
 			for (var key=0, size=data.stops.length; key<size; key++){
 				$('.stopDropList').append('<option value="'+data.stops[key].id+'">'+data.stops[key].id+'</option>');
 			}
 		});
+	}
+	
+	//TODO: Still need to collect results based on times, format time results to be displayed properly.
+	function displayRes(startT, startM, endT, endM, route, stop){
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { "route.id": route, "provider.id": providerID }, function(data){
+			for (var key=0, size=data.arrivals.length; key<size; key++){
+				$('#theResults').append('<li>'+data.arrivals[key].time+'</li>');
+			}
+		});	
+	}
+	
+	// Hides html div id "hide" and shows html div id "display".
+	function swapHTML(hide, display){
+		document.getElementById(display).style.display = 'block';
+		document.getElementById(hide).style.display = 'none';
 	}
 		
 	// Sets providerID to value of agencyList selection.
 	// Populates other search option fields based on this ID.
 	// Hides html div id "hide" and shows html div id "display".
 	function displayOptions(hide, display){
-		var providerID = $('#agencyList').val();
+		providerID = $('#agencyList').val();
 		displayTimes();
-		displayStops(providerID);
-		displayRoutes(providerID);
-		document.getElementById(display).style.display = 'block';
-		document.getElementById(hide).style.display = 'none';		
+		displayStops();
+		displayRoutes();
+		swapHTML(hide, display);		
+	}
+	
+	function displayResults(hide, display){
+		var startT = $('#startTime').val();
+		var startM = $('#startM').val();
+		var endT = $('#endTime').val();
+		var endM = $('#endM').val();
+		var route = $('.routeDropList').val();
+		var stop = $('.stopDropList').val();
+		displayRes(startT, startM, endT, endM, route, stop);		
+		swapHTML(hide, display);
 	}
 		
 	// Calls displayOptions function upon press of first Search button.
 	document.getElementById('b1').addEventListener('click',function(e){
 		displayOptions('searchAgs','searchOpts');
+	});
+	
+	// Calls displayResults function upon press of second Search button.
+	document.getElementById('b2').addEventListener('click',function(e){
+		displayResults('searchOpts','results');
 	});
 		
 	$(displayAgencies());
