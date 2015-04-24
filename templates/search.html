@@ -72,7 +72,6 @@
 	</div>
 	
 	<div id="results" style="display:none">
-		Results:<br>
 		<ul id="theResults"></ul>
 	</div>
 </div>
@@ -143,11 +142,53 @@
 		});
 	}
 	
-	//TODO: Still need to collect results based on times, format time results to be displayed properly.
+	// Displays results based on search bounds.
 	function displayRes(startT, startM, endT, endM, route, stop){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { "route.id": route, "provider.id": providerID }, function(data){
+		var startTime, endTime;
+		
+		/*** Parsing hours and minutes ***/
+		var startHr = parseInt(startT.substr(0, startT.indexOf(':')));
+		var startMin = parseInt(startT.substr((startT.indexOf(':')+1), startT.length));
+		var endHr = parseInt(endT.substr(0, endT.indexOf(':')));
+		var endMin = parseInt(endT.substr((endT.indexOf(':')+1), endT.length));
+		
+		/*** Correcting hours to military time if PM ***/
+		if (startM == "PM"){
+			if(startHr != 12){
+				startHr = startHr + 12;
+			}
+		}
+		if (endM == "PM"){
+			if(endHr != 12){
+				endHr = endHr + 12;
+			}
+		}
+		
+		/*** Creating proper time formats ***/
+		var d = new Date();
+		d.setHours(startHr);
+		d.setMinutes(startMin);
+		startTime = d.getTime()/1000;
+		
+		/*** If start time is PM and end is AM, change end date to tomorrow ***/
+		if ((startM == "PM") && (endM == "AM")){
+			d.setDate(d.getDate() + 1);
+		}
+		d.setHours(endHr);
+		d.setMinutes(endMin);
+		endTime = d.getTime()/1000;
+		
+		/*** Displaying search bounds ***/
+		$('#theResults').append('<li>'+"Arrivals for ROUTE: "+route.substr((route.indexOf('_')+1), route.length)+" STOP: "+
+												stop.replace(/_/g, " ")+" from "+startT+startM+" to "+endT+endM+":"+'</li>');
+
+		/*** Adding results ***/										
+		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { "route.id": route, "provider.id": providerID, "stop.id": stop, start_time: startTime, end_time: endTime }, function(data){
+			var a;
+			data.arrivals.sort();
 			for (var key=0, size=data.arrivals.length; key<size; key++){
-				$('#theResults').append('<li>'+data.arrivals[key].time+'</li>');
+				a = new Date(data.arrivals[key].time * 1000);
+				$('#theResults').append('<li>'+a.toLocaleDateString() + " " + a.toLocaleTimeString()+'</li>');
 			}
 		});	
 	}
@@ -169,6 +210,7 @@
 		swapHTML(hide, display);		
 	}
 	
+	// Retrieve selected search bounds, call function to return results, and swap HTML views.
 	function displayResults(hide, display){
 		var startT = $('#startTime').val();
 		var startM = $('#startM').val();
