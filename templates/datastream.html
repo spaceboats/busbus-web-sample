@@ -25,7 +25,7 @@
         function refreshTable(){
             var ct = new Date().getTime() / 1000;
             var ft = ct + 60;
-            $.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { start_time: ct, end_time: ft }, function(data){
+            $.get("http://busbus-dev.spaceboats.net/arrivals", { start_time: ct, end_time: ft }, function(data){
                 var r = new Array(), j = 8;
                 r[0] = '<tr><th>';
                 r[1] = 'Time';

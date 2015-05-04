@@ -13,7 +13,7 @@
         height:500px;
     }
 	
-	#searchAgs, #searchOpts, #results{
+	#searchAgs, #searchOpts, #results, #dialog-box{
       border: 10px solid #13AE6C;
 	  background-color:#3e3436;
       font-family:Arial, sans-serif;
@@ -26,11 +26,37 @@
   }	
   
   #agencyList, #startTime, #startM, #endTime, #endM, .routeDropList, .stopDropList, button{
+	width:150px;
 	font-size:24px;
 	background-color:#3e3436;
 	color:#FFFFFF;
 	border-color:#13AE6C;
   }
+  
+  #dialog-box {
+    
+    background:#3e3436;
+    /* styling of the dialog box, i have a fixed dimension for this demo */ 
+    width:328px; 
+    
+    /* make sure it has the highest z-index */
+    position:absolute; 
+    z-index:5000; 
+    /* hide it by default */
+    display:none;
+  }
+  
+  #dialog-box .dialog-content {
+    /* style the content */
+    text-align:center; 
+    padding:10px; 
+    margin:13px;
+    //color:#666; 
+    //font-family:arial;
+    //font-size:11px; 
+  }
+ 
+  
 {% endblock %}
 
 {% block body %}
@@ -75,7 +101,13 @@
 	<div id="results" style="display:none">
 		<ul id="theResults"></ul>
 	</div>
-</div>
+	
+	<div id="dialog-box">
+		<div class="dialog-content">
+			<div id="dialog-message"></div><br>
+			<button id="b4">OK</button>
+		</div>
+	</div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>			
@@ -84,11 +116,12 @@
 	
 	// Populate agencies in drop-down selection box.
 	function displayAgencies(){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/agencies", function(data){
+		$.get("http://busbus-dev.spaceboats.net/agencies", function(data){
 			for (var key=0, size=data.agencies.length; key<size; key++){
 				$('#agencyList').append('<option value="'+data.agencies[key].provider.id+'">'+data.agencies[key].name+'</option>');
 			}
 		});
+		alert("HERE2");
 	}
 		
 	// Populate times in drop-down selection boxes.
@@ -127,7 +160,7 @@
 		
 	// Displays available routes to choose from based on provider ID.
 	function displayRoutes(){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/routes", { "provider.id": providerID }, function(data){
+		$.get("http://busbus-dev.spaceboats.net/routes", { "provider.id": providerID }, function(data){
 			for (var key=0, size=data.routes.length; key<size; key++){
 				$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
 			}
@@ -136,7 +169,7 @@
 		
 	// Displays available stops to choose from based on provider ID.
 	function displayStops(){
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/stops", { "provider.id": providerID },function(data){
+		$.get("http://busbus-dev.spaceboats.net/stops", { "provider.id": providerID },function(data){
 			for (var key=0, size=data.stops.length; key<size; key++){
 				$('.stopDropList').append('<option value="'+data.stops[key].id+'">'+data.stops[key].id+'</option>');
 			}
@@ -184,7 +217,7 @@
 												stop.replace(/_/g, " ")+" from "+startT+startM+" to "+endT+endM+":"+'</li>');
 
 		/*** Adding results ***/										
-		$.get("http://ec2-54-68-11-133.us-west-2.compute.amazonaws.com/arrivals", { "route.id": route, "provider.id": providerID, "stop.id": stop, start_time: startTime, end_time: endTime }, function(data){
+		$.get("http://busbus-dev.spaceboats.net/arrivals", { "route.id": route, "provider.id": providerID, "stop.id": stop, start_time: startTime, end_time: endTime }, function(data){
 			var a;
 			data.arrivals.sort();
 			for (var key=0, size=data.arrivals.length; key<size; key++){
@@ -205,13 +238,19 @@
 	// Hides html div id "hide" and shows html div id "display".
 	function displayOptions(hide, display){
 		providerID = $('#agencyList').val();
+		
+		/*** Empty dropdown boxes before populating them just in case user arrives here after
+			 cancelling previous search on an agency. ***/
 		$('#startTime').empty();
 		$('#endTime').empty();
 		$('.routeDropList').empty();
 		$('.stopDropList').empty();
+		
+		/*** Populate dropdown boxes. ***/
 		displayTimes();
 		displayStops();
 		displayRoutes();
+		
 		swapHTML(hide, display);		
 	}
 	
@@ -238,7 +277,8 @@
 			if (startHr == 12){
 				if (endHr == 12){
 					if (startMin >= endMin){
-						alert("Please select a valid time range for the current date.");
+						//alert("Please select a valid time range for the current date.");
+						popup("Please select a valid time range for the current date.");
 					} else {
 						displayRes(startT, startM, endT, endM, route, stop);		
 						swapHTML(hide, display);
@@ -248,13 +288,16 @@
 					swapHTML(hide, display);
 				}
 			} else if (endHr == 12) {
-				alert("Please select a valid time range for the current date.");
+				//alert("Please select a valid time range for the current date.");
+				popup("Please select a valid time range for the current date.");
 			} else {
 				if (startHr > endHr){
-					alert("Please select a valid time range for the current date.");
+					//alert("Please select a valid time range for the current date.");
+					popup("Please select a valid time range for the current date.");
 				} else if (startHr == endHr){
 					if (startMin >= endMin){
-						alert("Please select a valid time range for the current date.");
+						//alert("Please select a valid time range for the current date.");
+						popup("Please select a valid time range for the current date.");
 					} else {
 						displayRes(startT, startM, endT, endM, route, stop);		
 						swapHTML(hide, display);
@@ -268,29 +311,34 @@
 			displayRes(startT, startM, endT, endM, route, stop);		
 			swapHTML(hide, display);
 		} else if ((startM == "PM") && (endM == "AM")){
-			alert("Please select a valid time range for the current date.");
+			//alert("Please select a valid time range for the current date.");
+			popup("Please select a valid time range for the current date.");
 		} else if ((startM == "PM") && (endM == "PM")){
 			if (endHr == 12){
 				if (startHr == 12){
 					if (startM >= endM){
-						alert("Please select a valid time range for the current date.");
+						//alert("Please select a valid time range for the current date.");
+						popup("Please select a valid time range for the current date.");
 					} else {
 						displayRes(startT, startM, endT, endM, route, stop);		
 						swapHTML(hide, display);
 					}
 				} else {
-					alert("Please select a valid time range for the current date.");
+					//alert("Please select a valid time range for the current date.");
+					popup("Please select a valid time range for the current date.");
 				}
 			} else if (startHr == endHr){
 				if (startM >= endM){
-					alert("Please select a valid time range for the current date.");
+					//alert("Please select a valid time range for the current date.");
+					popup("Please select a valid time range for the current date.");
 				} else {
 					displayRes(startT, startM, endT, endM, route, stop);		
 					swapHTML(hide, display);
 				}
 			} else {
 				if (startHr > endHr){
-					alert("Please select a valid time range for the current date.");
+					//alert("Please select a valid time range for the current date.");
+					popup("Please select a valid time range for the current date.");
 				} else {
 					displayRes(startT, startM, endT, endM, route, stop);		
 					swapHTML(hide, display);
@@ -301,17 +349,39 @@
 
 	// User option to cancel search takes them back to agency selection.
     function cancelOptions(hide, display){
+	
 		/*** Reset values in dropdown box. ***/
 		$('#agencyList').empty();
 		$('#agencyList').append('<option value="select">Select</option>');
-		/*** Go back to agency selection. ***/
 		displayAgencies();
+		
+		/*** Go back to agency selection. ***/
         swapHTML(hide, display);
+    }
+	
+	//Popup dialog
+	function popup(message) {
+        
+		// get the screen height and width  
+		var maskHeight = $(document).height();  
+		var maskWidth = $(window).width();
+    
+		// calculate the values for center alignment
+		var dialogTop =  (maskHeight/3) - ($('#dialog-box').height());  
+		var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
+    
+		// assign values to the overlay and dialog box
+		$('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+    
+		// display the message
+		$('#dialog-message').html(message);
     }
 		
 	// Calls displayOptions function upon press of first Search button.
 	document.getElementById('b1').addEventListener('click',function(e){
-		displayOptions('searchAgs','searchOpts');
+		if ($('#agencyList').val() != "select"){
+			displayOptions('searchAgs','searchOpts');
+		}
 	});
 	
 	// Calls displayResults function upon press of second Search button.
