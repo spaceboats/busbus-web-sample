@@ -68,8 +68,8 @@
 		<select class='stopDropList'></select>
 		<br><br>
 
+		<button id="b3">Cancel</button>
 		<button id="b2">Search</button>
-        <button id="b3">Cancel</button>
 	</div>
 	
 	<div id="results" style="display:none">
@@ -205,6 +205,10 @@
 	// Hides html div id "hide" and shows html div id "display".
 	function displayOptions(hide, display){
 		providerID = $('#agencyList').val();
+		$('#startTime').empty();
+		$('#endTime').empty();
+		$('.routeDropList').empty();
+		$('.stopDropList').empty();
 		displayTimes();
 		displayStops();
 		displayRoutes();
@@ -219,11 +223,89 @@
 		var endM = $('#endM').val();
 		var route = $('.routeDropList').val();
 		var stop = $('.stopDropList').val();
-		displayRes(startT, startM, endT, endM, route, stop);		
-		swapHTML(hide, display);
+		
+		/*** ERROR CHECKING ON TIME SELECTION ***/
+		
+		/*** Parsing hours and minutes ***/
+		var startHr = parseInt(startT.substr(0, startT.indexOf(':')));
+		var startMin = parseInt(startT.substr((startT.indexOf(':')+1), startT.length));
+		var endHr = parseInt(endT.substr(0, endT.indexOf(':')));
+		var endMin = parseInt(endT.substr((endT.indexOf(':')+1), endT.length));
+		
+		/*** If incorrect time range selection, alert pops up upon submit. ***/
+		/*** Else search based on input. ***/
+		if ((startM == "AM") && (endM == "AM")){
+			if (startHr == 12){
+				if (endHr == 12){
+					if (startMin >= endMin){
+						alert("Please select a valid time range for the current date.");
+					} else {
+						displayRes(startT, startM, endT, endM, route, stop);		
+						swapHTML(hide, display);
+					}
+				} else {
+					displayRes(startT, startM, endT, endM, route, stop);		
+					swapHTML(hide, display);
+				}
+			} else if (endHr == 12) {
+				alert("Please select a valid time range for the current date.");
+			} else {
+				if (startHr > endHr){
+					alert("Please select a valid time range for the current date.");
+				} else if (startHr == endHr){
+					if (startMin >= endMin){
+						alert("Please select a valid time range for the current date.");
+					} else {
+						displayRes(startT, startM, endT, endM, route, stop);		
+						swapHTML(hide, display);
+					}
+				} else {
+					displayRes(startT, startM, endT, endM, route, stop);		
+					swapHTML(hide, display);
+				}
+			}					
+		} else if ((startM == "AM") && (endM == "PM")){
+			displayRes(startT, startM, endT, endM, route, stop);		
+			swapHTML(hide, display);
+		} else if ((startM == "PM") && (endM == "AM")){
+			alert("Please select a valid time range for the current date.");
+		} else if ((startM == "PM") && (endM == "PM")){
+			if (endHr == 12){
+				if (startHr == 12){
+					if (startM >= endM){
+						alert("Please select a valid time range for the current date.");
+					} else {
+						displayRes(startT, startM, endT, endM, route, stop);		
+						swapHTML(hide, display);
+					}
+				} else {
+					alert("Please select a valid time range for the current date.");
+				}
+			} else if (startHr == endHr){
+				if (startM >= endM){
+					alert("Please select a valid time range for the current date.");
+				} else {
+					displayRes(startT, startM, endT, endM, route, stop);		
+					swapHTML(hide, display);
+				}
+			} else {
+				if (startHr > endHr){
+					alert("Please select a valid time range for the current date.");
+				} else {
+					displayRes(startT, startM, endT, endM, route, stop);		
+					swapHTML(hide, display);
+				}
+			}
+		}
 	}
 
+	// User option to cancel search takes them back to agency selection.
     function cancelOptions(hide, display){
+		/*** Reset values in dropdown box. ***/
+		$('#agencyList').empty();
+		$('#agencyList').append('<option value="select">Select</option>');
+		/*** Go back to agency selection. ***/
+		displayAgencies();
         swapHTML(hide, display);
     }
 		
@@ -237,7 +319,7 @@
 		displayResults('searchOpts','results');
 	});
 
-	// Calls displayResults function upon press of second Search button.
+	// Calls cancelOptions function upon press of Cancel button.
 	document.getElementById('b3').addEventListener('click',function(e){
         cancelOptions('searchOpts', 'searchAgs');
 	});
