@@ -34,26 +34,16 @@
   }
   
   #dialog-box {
-    
     background:#3e3436;
-    /* styling of the dialog box, i have a fixed dimension for this demo */ 
-    width:328px; 
-    
-    /* make sure it has the highest z-index */
+    width:350px; 
     position:absolute; 
-    z-index:5000; 
-    /* hide it by default */
     display:none;
   }
   
   #dialog-box .dialog-content {
-    /* style the content */
     text-align:center; 
     padding:10px; 
     margin:13px;
-    //color:#666; 
-    //font-family:arial;
-    //font-size:11px; 
   }
  
   
@@ -121,7 +111,6 @@
 				$('#agencyList').append('<option value="'+data.agencies[key].provider.id+'">'+data.agencies[key].name+'</option>');
 			}
 		});
-		alert("HERE2");
 	}
 		
 	// Populate times in drop-down selection boxes.
@@ -359,21 +348,17 @@
         swapHTML(hide, display);
     }
 	
-	//Popup dialog
+	// Alert popup function (stays centered on body)
 	function popup(message) {
-        
-		// get the screen height and width  
-		var maskHeight = $(document).height();  
-		var maskWidth = $(window).width();
-    
-		// calculate the values for center alignment
-		var dialogTop =  (maskHeight/3) - ($('#dialog-box').height());  
-		var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
-    
-		// assign values to the overlay and dialog box
-		$('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
-    
-		// display the message
+	
+		/*** Determines dimensions of body ***/
+		var h = $(body).height();  
+		var w = $(body).width();
+		
+		/*** Sets css to center pop-up & displays pop-up with message. ***/
+		var t =  (h/2) - ($('#dialog-box').height()/2);  
+		var l = (w/2) - ($('#dialog-box').width()/3); 
+		$('#dialog-box').css({top:t, left:l}).show();
 		$('#dialog-message').html(message);
     }
 		
@@ -392,6 +377,11 @@
 	// Calls cancelOptions function upon press of Cancel button.
 	document.getElementById('b3').addEventListener('click',function(e){
         cancelOptions('searchOpts', 'searchAgs');
+	});
+	
+	// Hides error pop-up box after user presses OK button
+	document.getElementById('b4').addEventListener('click',function(e){
+        document.getElementById('dialog-box').style.display = 'none';
 	});
 		
 	$(displayAgencies());
