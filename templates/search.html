@@ -69,6 +69,7 @@
 		<br><br>
 
 		<button id="b2">Search</button>
+        <button id="b3">Cancel</button>
 	</div>
 	
 	<div id="results" style="display:none">
@@ -221,6 +222,10 @@
 		displayRes(startT, startM, endT, endM, route, stop);		
 		swapHTML(hide, display);
 	}
+
+    function cancelOptions(hide, display){
+        swapHTML(hide, display);
+    }
 		
 	// Calls displayOptions function upon press of first Search button.
 	document.getElementById('b1').addEventListener('click',function(e){
@@ -230,6 +235,11 @@
 	// Calls displayResults function upon press of second Search button.
 	document.getElementById('b2').addEventListener('click',function(e){
 		displayResults('searchOpts','results');
+	});
+
+	// Calls displayResults function upon press of second Search button.
+	document.getElementById('b3').addEventListener('click',function(e){
+        cancelOptions('searchOpts', 'searchAgs');
 	});
 		
 	$(displayAgencies());
