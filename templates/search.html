@@ -241,13 +241,14 @@
 	function displayOptions(hide, display){
 		providerID = $('#agencyList').val();
 		
-		/*** Empty dropdown boxes before populating them just in case user arrives here after
-			 cancelling previous search on an agency. ***/
+		/*** Empty dropdown boxes before populating them just in case user arrives here 
+		     after cancelling previous search on an agency. ***/
 		$('#startTime').empty();
 		$('#endTime').empty();
 		$('.routeDropList').empty();
 		$('.stopDropList').empty();
 		
+		/*** Display bus loading gif until dropdown values are loaded & timeout expires. ***/
 		var f1 = function () {
 			var r = $.Deferred();
 			
@@ -272,6 +273,7 @@
 			return r;
 		}
 		
+		/*** Hide bus loading pop-up & display search options based on agency. ***/
 		var f2 = function () {
 			document.getElementById('load-box').style.display = 'none';
 			swapHTML(hide, display);
