@@ -117,6 +117,7 @@
 <script>			
 
 	var providerID;
+	var providerName;
 	
 	// Populate agencies in drop-down selection box.
 	function displayAgencies(){
@@ -216,6 +217,7 @@
 		endTime = d.getTime()/1000;
 		
 		/*** Displaying search bounds ***/
+		$('#theResults').append('<li>'+"Transit Agency: "+providerName+'</li>');
 		$('#theResults').append('<li>'+"Arrivals for ROUTE: "+route.substr((route.indexOf('_')+1), route.length)+" STOP: "+
 												stop.replace(/_/g, " ")+" from "+startT+startM+" to "+endT+endM+":"+'</li>');
 
@@ -241,6 +243,7 @@
 	// Hides html div id "hide" and shows html div id "display".
 	function displayOptions(hide, display){
 		providerID = $('#agencyList').val();
+		providerName = $("#agencyList :selected").text();
 		
 		/*** Empty dropdown boxes before populating them just in case user arrives here 
 		     after cancelling previous search on an agency. ***/
