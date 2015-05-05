@@ -1,333 +1,76 @@
 {% extends "_base.html" %}
 {% block bodycss%}
 
-    *{
-		margin: 0;
-    }
+ *{
+	margin: 0;
+  }
 	
-    #body{
+  #body{
         margin-left: auto;
         margin-right: auto;
         padding:50px;
-	    width:1200px;
+	width:1200px;
         height:500px;
-    }
+  }
 	
-	#searchAgs, #searchOpts1, #searchOpts2A, #searchOpts2B, #load-box{
-      border: 10px solid #13AE6C;
-	  background-color:#3e3436;
-      font-family:Arial, sans-serif;
-      color: #FFFFFF;
-      padding: 10px;
-      text-align:left;
-      font-weight:bold;
-      font-size:24px;
-      letter-spacing:1px;
-  }
-  
-   #agencyList, #typeList, .routeDropList, .stopDropList, button{
-	width:150px;
-	font-size:24px;
-	background-color:#3e3436;
-	color:#FFFFFF;
-	border-color:#13AE6C;
-  }
-  
-  #load-box {
-	width:350px; 
-    position:absolute; 
-    display:none;
-  }
-  
- #load-box, .load-content {
-    text-align:center; 
-    padding:10px; 
-    margin:13px;
-  }
-  
   table{
-	display:none;
+	display:block;
   }
 
 {% endblock %}
 {% block body %}
 
-    <div id="body">
-		<div id="searchAgs">
-			Select the Agency:<br>
-			<select id="agencyList">
-				<option value="select">Select</option>
-			</select>
-			<button id="b1">Search</button>
-		</div>
-		
-		<div id="searchOpts1" style="display:none">
-			Select filter upon which arrivals will be streamed:<br>
-			<select id="typeList">
-				<option value="routes">ROUTES</option>
-				<option value="stops">STOPS</option>	
-			</select>
-			<br><br>
-			<button id="b3">Cancel</button>
-			<button id="b2">Search</button>
-		</div>
-		
-		<div id="searchOpts2A" style="display:none">
-			Select route:<br>
-			<select class='routeDropList'></select>
-			<button id="b4">Search</button>
-		</div>
-		
-		<div id="searchOpts2B" style="display:none">
-			Select stop:<br>
-			<select class='stopDropList'></select>			
-			<button id="b5">Search</button>
-		</div>
-		
-		<div id="load-box">
-			<div class="load-content">
-				busbus is busy busing...<br><br>
-				<img src="/static/animated-bus-image.gif">
-			</div>
-		</div>
-		
+    <div id="body">		
         <table id="busDataTable"></table>
     </div>
     <script src="https://code.jquery.com/jquery-1.5.1.js"></script>
     <script>
-	
-		var providerID;
-		var searchOption;
-		var searchParameter;
+
+		providerID = "6181e04e3c26ace60a8e709175c96298d8e5ef08";
 		
-		// Hides html div id "hide" and shows html div id "display".
-		function swapHTML(hide, display){
-			document.getElementById(display).style.display = 'block';
-			document.getElementById(hide).style.display = 'none';
-		}
-	
-		// Populate agencies in drop-down selection box.
-		function displayAgencies(){
-			$.get("http://busbus-dev.spaceboats.net/agencies", function(data){
-				for (var key=0, size=data.agencies.length; key<size; key++){
-					$('#agencyList').append('<option value="'+data.agencies[key].provider.id+'">'+data.agencies[key].name+'</option>');
+        	function refreshTable(){
+            		var ct = new Date().getTime() / 1000;
+            		var ft = ct + 60;
+			$.get("http://busbus-dev.spaceboats.net/arrivals", { "provider.id": providerID, start_time: ct, end_time: ft }, function(data){
+				var r = new Array(), j = 8;
+				r[0] = '<tr><th>';
+				r[1] = 'Time';
+				r[2] = '</th><th>';
+				r[3] = 'Bus Route';
+				r[4] = '</th><th>';
+				r[5] = 'Stop Name';
+				r[6] = '</th><th>';
+				r[7] = 'Headsign';
+				r[8] = '</th>';
+				data.arrivals.sort(compare);
+				for (var key=0, size=data.arrivals.length; key<size; key++){
+					r[++j] ='<tr><td>';
+					var d = new Date(data.arrivals[key].time * 1000);
+					r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+					r[++j] = '</td><td>';
+					r[++j] = data.arrivals[key].route.id;
+					r[++j] = '</td><td>'; 
+					r[++j] = data.arrivals[key].stop.id;     				 	
+					r[++j] = '</td><td>';
+					r[++j] = data.arrivals[key].headsign;
+					r[++j] = '</td></tr>';
 				}
+				$('#busDataTable').html(r.join(''));				
 			});
-		}
-		
-		// User option to cancel search takes them back to agency selection.
-		function cancelOptions(hide, display){
-	
-			/*** Reset values in dropdown box. ***/
-			$('#agencyList').empty();
-			$('#agencyList').append('<option value="select">Select</option>');
-			displayAgencies();
-		
-			/*** Go back to agency selection. ***/
-			swapHTML(hide, display);
-		}
-		
-		// Sets providerID to value of agencyList selection.
-		// Hides html div id "hide" and shows html div id "display".
-		function displayOptions(hide, display){
-			providerID = $('#agencyList').val();
-			swapHTML(hide, display);
-		}
-		
-		// Populate routes in drop-down selection box.
-		function displayRoutes(hide, display){
-		
-			$('.routeDropList').empty();
-		
-			/*** Display bus loading gif until dropdown values are loaded & timeout expires. ***/
-			var f1 = function () {
-				var r = $.Deferred();
-			
-				/*** Determines dimensions of body ***/
-				var h = $(body).height();  
-				var w = $(body).width();
-		
-				/*** Sets css to center pop-up & displays pop-up with message. ***/
-				var t =  (h/2) - ($('#load-box').height()/2);  
-				var l = (w/2) - ($('#load-box').width()/3); 
-				$('#load-box').css({top:t, left:l}).show();
-			
-				/*** Populate dropdown box. ***/
-				$.get("http://busbus-dev.spaceboats.net/routes", { "provider.id": providerID }, function(data){
-					for (var key=0, size=data.routes.length; key<size; key++){
-						$('.routeDropList').append('<option value="'+data.routes[key].id+'">'+data.routes[key].id+'</option>');
-					}
-				});
-				
-				setTimeout(function () {
-					r.resolve();
-				}, 7000);
-			
-				return r;
-			}
-		
-			/*** Hide bus loading pop-up & display search options based on agency. ***/
-			var f2 = function () {
-				document.getElementById('load-box').style.display = 'none';
-				swapHTML(hide, display);
-			}
-		
-			f1().done(f2);
-
-		}
-		
-		// Populate stops in drop-down selection box.
-		function displayStops(hide, display){
-		
-			$('.stopDropList').empty();
-		
-			/*** Display bus loading gif until dropdown values are loaded & timeout expires. ***/
-			var f1 = function () {
-				var r = $.Deferred();
-			
-				/*** Determines dimensions of body ***/
-				var h = $(body).height();  
-				var w = $(body).width();
-		
-				/*** Sets css to center pop-up & displays pop-up with message. ***/
-				var t =  (h/2) - ($('#load-box').height()/2);  
-				var l = (w/2) - ($('#load-box').width()/3); 
-				$('#load-box').css({top:t, left:l}).show();
-			
-				/*** Populate dropdown box. ***/
-				$.get("http://busbus-dev.spaceboats.net/stops", { "provider.id": providerID }, function(data){
-					for (var key=0, size=data.stops.length; key<size; key++){
-						$('.stopDropList').append('<option value="'+data.stops[key].id+'">'+data.stops[key].id+'</option>');
-					}
-				});
-				
-				setTimeout(function () {
-					r.resolve();
-				}, 7000);
-			
-				return r;
-			}
-		
-			/*** Hide bus loading pop-up & display search options based on agency. ***/
-			var f2 = function () {
-				document.getElementById('load-box').style.display = 'none';
-				swapHTML(hide, display);
-			}
-		
-			f1().done(f2);
-
-		}
-		
-        function refreshTable(){
-            var ct = new Date().getTime() / 1000;
-            var ft = ct + 60;
-			if (searchOption == "routes"){
-				$.get("http://busbus-dev.spaceboats.net/arrivals", { "provider.id": providerID, "route.id": searchParameter, start_time: ct, end_time: ft }, function(data){
-					var r = new Array(), j = 8;
-					r[0] = '<tr><th>';
-					r[1] = 'Time';
-					r[2] = '</th><th>';
-					r[3] = 'Bus Route';
-					r[4] = '</th><th>';
-					r[5] = 'Stop Name';
-					r[6] = '</th><th>';
-					r[7] = 'Headsign';
-					r[8] = '</th>';
-					data.arrivals.sort(compare);
-					for (var key=0, size=data.arrivals.length; key<size; key++){
-						r[++j] ='<tr><td>';
-						var d = new Date(data.arrivals[key].time * 1000);
-						r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
-						r[++j] = '</td><td>';
-						r[++j] = data.arrivals[key].route.id;
-						r[++j] = '</td><td>'; 
-						r[++j] = data.arrivals[key].stop.id;     				 	
-						r[++j] = '</td><td>';
-						r[++j] = data.arrivals[key].headsign;
-						r[++j] = '</td></tr>';
-					}
-					$('#busDataTable').html(r.join(''));				
-				});
-				setTimeout(refreshTable, 7000);
-			} else if (searchOption == "stops"){
-				$.get("http://busbus-dev.spaceboats.net/arrivals", { "provider.id": providerID, "stop.id": searchParameter, start_time: ct, end_time: ft }, function(data){
-					var r = new Array(), j = 8;
-					r[0] = '<tr><th>';
-					r[1] = 'Time';
-					r[2] = '</th><th>';
-					r[3] = 'Bus Route';
-					r[4] = '</th><th>';
-					r[5] = 'Stop Name';
-					r[6] = '</th><th>';
-					r[7] = 'Headsign';
-					r[8] = '</th>';
-					data.arrivals.sort(compare);
-					for (var key=0, size=data.arrivals.length; key<size; key++){
-						r[++j] ='<tr><td>';
-						var d = new Date(data.arrivals[key].time * 1000);
-						r[++j] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
-						r[++j] = '</td><td>';
-						r[++j] = data.arrivals[key].route.id;
-						r[++j] = '</td><td>'; 
-						r[++j] = data.arrivals[key].stop.id;     				 	
-						r[++j] = '</td><td>';
-						r[++j] = data.arrivals[key].headsign;
-						r[++j] = '</td></tr>';
-					}
-					$('#busDataTable').html(r.join(''));				
-				});
-				setTimeout(refreshTable, 7000);
-			}
+			setTimeout(refreshTable, 7000);
 		}
 		
 		function compare(a,b){
-            if (a.time < b.time)
-                return -1;
-            else if (a.time > b.time)
-                return 1;
-            else
-                return 0;
-        }	
-		
-		// Calls displayOptions function upon press of first Search button.
-		document.getElementById('b1').addEventListener('click',function(e){
-			if ($('#agencyList').val() != "select"){
-				displayOptions('searchAgs','searchOpts1');
-			}
-		});
-		
-		// Calls displayOptions 2A or 2B upon press of second Search button.
-		document.getElementById('b2').addEventListener('click',function(e){
-			if ($('#typeList').val() == "routes"){
-				searchOption = "routes";
-				displayRoutes('searchOpts1','searchOpts2A');
-			} else if ($('#typeList').val() == "stops"){
-				searchOption = "stops";
-				displayStops('searchOpts1','searchOpts2B');
-			}
-		});
-		
-		// Calls cancelOptions function upon press of Cancel button.
-		document.getElementById('b3').addEventListener('click',function(e){
-			cancelOptions('searchOpts1', 'searchAgs');
-		});
-		
-		// Calls cancelOptions function upon press of Cancel button.
-		document.getElementById('b4').addEventListener('click',function(e){
-			searchParameter = $('.routeDropList').val();
-			swapHTML('searchOpts2A', 'busDataTable');
-			refreshTable();
-		});
-		
-		// Calls cancelOptions function upon press of Cancel button.
-		document.getElementById('b5').addEventListener('click',function(e){
-			searchParameter = $('.stopDropList').val();
-			swapHTML('searchOpts2B', 'busDataTable');
-			refreshTable();
-		});
+            		if (a.time < b.time)
+                		return -1;
+            		else if (a.time > b.time)
+                		return 1;
+            		else
+                		return 0;
+        	}	
 		
 		
-		$(displayAgencies());
+		$(refreshTable());
 
     </script>
 
