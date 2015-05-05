@@ -13,7 +13,7 @@
         height:500px;
     }
 	
-	#searchAgs, #searchOpts, #results, #dialog-box{
+	#searchAgs, #searchOpts, #results, #dialog-box, #load-box{
       border: 10px solid #13AE6C;
 	  background-color:#3e3436;
       font-family:Arial, sans-serif;
@@ -40,7 +40,13 @@
     display:none;
   }
   
-  #dialog-box .dialog-content {
+  #load-box {
+	width:350px; 
+    position:absolute; 
+    display:none;
+  }
+  
+  #dialog-box, .dialog-content, #load-box, .load-content {
     text-align:center; 
     padding:10px; 
     margin:13px;
@@ -98,8 +104,15 @@
 			<button id="b4">OK</button>
 		</div>
 	</div>
+	
+	<div id="load-box">
+		<div class="load-content">
+			busbus is busy busing...<br><br>
+			<img src="/static/animated-bus-image.gif">
+		</div>
+	</div>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.5.1.js"></script>
 <script>			
 
 	var providerID;
@@ -235,12 +248,37 @@
 		$('.routeDropList').empty();
 		$('.stopDropList').empty();
 		
-		/*** Populate dropdown boxes. ***/
-		displayTimes();
-		displayStops();
-		displayRoutes();
+		var f1 = function () {
+			var r = $.Deferred();
+			
+			/*** Determines dimensions of body ***/
+			var h = $(body).height();  
+			var w = $(body).width();
 		
-		swapHTML(hide, display);		
+			/*** Sets css to center pop-up & displays pop-up with message. ***/
+			var t =  (h/2) - ($('#load-box').height()/2);  
+			var l = (w/2) - ($('#load-box').width()/3); 
+			$('#load-box').css({top:t, left:l}).show();
+			
+			/*** Populate dropdown boxes. ***/
+			displayTimes();
+			displayRoutes();
+			displayStops();
+			
+			setTimeout(function () {
+				r.resolve();
+			}, 7000);
+			
+			return r;
+		}
+		
+		var f2 = function () {
+			document.getElementById('load-box').style.display = 'none';
+			swapHTML(hide, display);
+		}
+		
+		f1().done(f2);
+
 	}
 	
 	// Retrieve selected search bounds, call function to return results, and swap HTML views.
